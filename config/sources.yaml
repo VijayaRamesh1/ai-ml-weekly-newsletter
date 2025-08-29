@@ -1,22 +1,8 @@
 sources:
-  - name: "ArXiv AI"
-    url: "http://export.arxiv.org/rss/cs.AI"
-  - name: "Hacker News"
-    url: "https://news.ycombinator.com/rss"
-  - name: "TechCrunch"
-    url: "https://techcrunch.com/feed/"
-  - name: "VentureBeat"
-    url: "https://venturebeat.com/feed/"
-  - name: "arXiv cs.CL"
-    type: rss
-    url: https://export.arxiv.org/rss/cs.CL
-  - name: "Anthropic"
-    type: rss
-    url: https://www.anthropic.com/news.xml
-  - name: "Hugging Face"
-    type: rss
-    url: https://huggingface.co/blog/rss.xml
-  - name: "Meta AI"
-    type: rss
-    url: https://ai.facebook.com/blog/rss/
-  # Added more sources for better coverage
+  - { name: "arXiv cs.LG", type: rss, url: "https://export.arxiv.org/rss/cs.LG" }
+  - { name: "arXiv cs.CL", type: rss, url: "https://export.arxiv.org/rss/cs.CL" }
+  - { name: "OpenAI Blog", type: rss, url: "https://openai.com/blog/rss.xml" }
+  - { name: "Google AI Blog", type: rss, url: "https://ai.googleblog.com/feeds/posts/default" }
+  - { name: "Anthropic", type: rss, url: "https://www.anthropic.com/news.xml" }
+  - { name: "Hugging Face", type: rss, url: "https://huggingface.co/blog/rss.xml" }
+  - { name: "Meta AI", type: rss, url: "https://ai.facebook.com/blog/rss/" }

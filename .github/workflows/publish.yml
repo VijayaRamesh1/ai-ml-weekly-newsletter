@@ -8,34 +8,37 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-    
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    
-    - name: Build static issue (collect → score → render)
-      run: |
-        set -euxo pipefail
-        python app/collector/rss_collect.py
-        wc -l data/candidates.jsonl || true
-        python app/scorer/score.py
-        cat data/top10.json || true
-        python app/build_issue.py
-        ls -la site/dist
-        sed -n '1,60p' site/dist/index.html
-        test -f site/dist/index.html
-    
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./site/dist
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -V
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -r requirements.txt
+          python -c "import jinja2, yaml, feedparser, trafilatura, dateutil, rapidfuzz, httpx; print('OK: all imports present')"
+
+      - name: Build static issue (collect → score → render)
+        run: |
+          set -euxo pipefail
+          ls -la
+          ls -la config || true
+          cat config/sources.yaml || true
+          python app/collector/rss_collect.py
+          wc -l data/candidates.jsonl || true
+          python app/scorer/score.py
+          cat data/top10.json || true
+          python app/build_issue.py
+          ls -la site/dist
+          sed -n '1,80p' site/dist/index.html
+          test -f site/dist/index.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/dist
