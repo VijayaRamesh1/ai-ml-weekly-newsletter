@@ -1,42 +1,33 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h1>{{ header }}</h1>
-<p class="subheader">{{ subheader }}</p>
-<p class="generated">Generated: {{ generated_at }}</p>
+  <section class="list" aria-live="polite">
+    {% for item in items %}
+      <article class="card"
+        data-rank="{{ item.rank }}"
+        data-score="{{ "%.3f"|format(item.final_score) }}"
+        data-source="{{ item.source }}"
+        data-date="{{ item.published }}"
+        data-haystack="{{ (item.title ~ ' ' ~ item.summary_p1 ~ ' ' ~ item.summary_p2)|lower|replace('"','')|replace("'",'') }}">
+        <div class="topline">
+          <span class="rank">#{{ item.rank }}</span>
+          <h2 class="title"><a href="{{ item.url }}">{{ item.title }}</a></h2>
+        </div>
+        <div class="sub">
+          {{ item.source }} • {{ item.published }}
+          <span class="badge" title="Score">Score {{ "%.2f"|format(item.final_score) }}</span>
+        </div>
 
-{% for item in items %}
-<div class="item">
-    <div class="rank">{{ item.rank }}</div>
-    <div class="title">
-        <a href="{{ item.url }}" target="_blank">{{ item.title }}</a>
-    </div>
-    <div class="meta">
-        <span class="source">{{ item.source }}</span> • 
-        {{ item.published[:10] }}
-    </div>
-    <div class="summary">
-        <p>{{ item.summary_p1 }}</p>
-        <p>{{ item.summary_p2 }}</p>
-    </div>
-    <div class="scores">
-        <div class="score final-score">
-            <div class="score-label">Final Score</div>
-            <div>{{ "%.3f"|format(item.final_score) }}</div>
+        <div class="sum">
+          <p>{{ item.summary_p1 }}</p>
+          <p>{{ item.summary_p2 }}</p>
         </div>
-        <div class="score">
-            <div class="score-label">Technical</div>
-            <div>{{ "%.2f"|format(item.tech) }}</div>
+
+        <div class="scores" aria-label="Axis scores">
+          <span class="badge">Tech {{ "%.2f"|format(item.tech) }}</span>
+          <span class="badge">Applicability {{ "%.2f"|format(item.app) }}</span>
+          <span class="badge">Business {{ "%.2f"|format(item.biz) }}</span>
         </div>
-        <div class="score">
-            <div class="score-label">Applicability</div>
-            <div>{{ "%.2f"|format(item.app) }}</div>
-        </div>
-        <div class="score">
-            <div class="score-label">Business</div>
-            <div>{{ "%.2f"|format(item.biz) }}</div>
-        </div>
-    </div>
-</div>
-{% endfor %}
+      </article>
+    {% endfor %}
+  </section>
 {% endblock %}
