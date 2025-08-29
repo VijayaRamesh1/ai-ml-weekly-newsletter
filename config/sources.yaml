@@ -1,0 +1,9 @@
+sources:
+  - name: "ArXiv AI"
+    url: "http://export.arxiv.org/rss/cs.AI"
+  - name: "Hacker News"
+    url: "https://news.ycombinator.com/rss"
+  - name: "TechCrunch"
+    url: "https://techcrunch.com/feed/"
+  - name: "VentureBeat"
+    url: "https://venturebeat.com/feed/"

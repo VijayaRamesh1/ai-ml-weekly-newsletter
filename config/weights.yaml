@@ -1,0 +1,8 @@
+weights:
+  technical_innovation: 0.35
+  practical_applicability: 0.30
+  timeliness: 0.20
+  community_impact: 0.10
+  educational_value: 0.05
+
+security_multiplier: 1.1
