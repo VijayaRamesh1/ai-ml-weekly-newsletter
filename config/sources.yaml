@@ -7,3 +7,4 @@ sources:
     url: "https://techcrunch.com/feed/"
   - name: "VentureBeat"
     url: "https://venturebeat.com/feed/"
+  # Added more sources for better coverage
