@@ -27,3 +27,8 @@ python app/build_issue.py
 # Open the newsletter
 open site/dist/index.html
 ```
+
+## Status
+- ✅ Templates restored and working locally
+- 🔄 Waiting for GitHub Actions to rebuild and deploy
+- 🌐 Live site will update once build completes
