@@ -30,5 +30,6 @@ open site/dist/index.html
 
 ## Status
 - ✅ Templates restored and working locally
-- 🔄 Waiting for GitHub Actions to rebuild and deploy
+- ✅ Robust Pages workflow deployed
+- 🔄 Triggering new build with proper permissions
 - 🌐 Live site will update once build completes
