@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ header }}</h1>
+<p class="subheader">{{ subheader }}</p>
+<p class="generated">Generated: {{ generated_at }}</p>
+
+{% for item in items %}
+<div class="item">
+    <div class="rank">{{ item.rank }}</div>
+    <div class="title">
+        <a href="{{ item.url }}" target="_blank">{{ item.title }}</a>
+    </div>
+    <div class="meta">
+        <span class="source">{{ item.source }}</span> • 
+        {{ item.published[:10] }}
+    </div>
+    <div class="summary">
+        <p>{{ item.summary_p1 }}</p>
+        <p>{{ item.summary_p2 }}</p>
+    </div>
+    <div class="scores">
+        <div class="score final-score">
+            <div class="score-label">Final Score</div>
+            <div>{{ "%.3f"|format(item.final_score) }}</div>
+        </div>
+        <div class="score">
+            <div class="score-label">Technical</div>
+            <div>{{ "%.2f"|format(item.tech) }}</div>
+        </div>
+        <div class="score">
+            <div class="score-label">Applicability</div>
+            <div>{{ "%.2f"|format(item.app) }}</div>
+        </div>
+        <div class="score">
+            <div class="score-label">Business</div>
+            <div>{{ "%.2f"|format(item.biz) }}</div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
