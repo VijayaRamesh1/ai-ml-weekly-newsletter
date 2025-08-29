@@ -5,92 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{{ title }}</title>
 
-  <!-- System font stack for speed -->
   <style>
     :root{
-      /* Colors (light) */
-      --bg: #0b0d11;
-      --panel: #111520;
-      --panel-border:#1b2231;
-      --text:#eaf0f7;
-      --muted:#a6b0c3;
-      --link:#9ad1ff;
-      --accent:#4cc3ff;
-      --badge:#233149;
-      --ok:#70e1a9;
-      --warn:#ffd166;
-      --danger:#ff7b7b;
-
-      /* Typography & layout */
-      --radius: 16px;
-      --gap: 16px;
-      --container: 860px;
-      --shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 8px 28px rgba(0,0,0,0.35);
+      /* Color tokens */
+      --bg: #0b0d11; --panel:#0f1420; --border:#1b2231; --text:#e9eef6; --muted:#a7b1c3; --link:#8fd0ff;
+      --badge:#1a2233; --accent:#52c3ff; --ok:#5fe1a1; --warn:#ffd166; --danger:#ff8aa0;
+      /* Type & layout */
+      --radius:16px; --gap:16px; --container:900px; --measure:70ch; --shadow:0 10px 30px rgba(0,0,0,.35);
+      --fs-0:14px; --fs-1:16px; --fs-2:18px; --fs-3:22px; --fs-4:26px;
     }
-
-    /* Light/dark themes */
     @media (prefers-color-scheme: light){
-      :root{ --bg:#f7fafc; --panel:#ffffff; --panel-border:#e6eaf1; --text:#111827; --muted:#6b7280; --link:#0a66c2; --badge:#eef2f6; }
+      :root{ --bg:#f8fafc; --panel:#ffffff; --border:#e6eaf1; --text:#0f172a; --muted:#64748b; --link:#0a66c2; --badge:#eef2f6; }
     }
-    [data-theme="light"]{ --bg:#f7fafc; --panel:#ffffff; --panel-border:#e6eaf1; --text:#111827; --muted:#6b7280; --link:#0a66c2; --badge:#eef2f6; }
-    [data-theme="dark"]{  --bg:#0b0d11; --panel:#111520; --panel-border:#1b2231; --text:#eaf0f7; --muted:#a6b0c3; --link:#9ad1ff; --badge:#233149; }
+    [data-theme="light"]{ --bg:#f8fafc; --panel:#ffffff; --border:#e6eaf1; --text:#0f172a; --muted:#64748b; --link:#0a66c2; --badge:#eef2f6; }
+    [data-theme="dark"] { --bg:#0b0d11; --panel:#0f1420; --border:#1b2231; --text:#e9eef6; --muted:#a7b1c3; --link:#8fd0ff; --badge:#1a2233; }
 
     /* Base */
     html,body{height:100%}
-    body{
-      margin:0; background:var(--bg); color:var(--text);
-      font: 16px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
-    }
-    .container{ max-width:var(--container); margin:0 auto; padding:24px 16px 48px; }
-    header{ margin-bottom: 18px; }
-    h1{ margin:0 0 6px; font-weight:700; font-size: clamp(22px, 2.6vw, 28px); }
-    .meta{ color:var(--muted); font-size:14px; }
-    a{ color:var(--link); text-decoration:none; }
-    a:hover{text-decoration:underline;}
+    body{margin:0;background:var(--bg);color:var(--text);font:var(--fs-1)/1.7 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Noto Sans",sans-serif}
+    .container{max-width:var(--container);margin:0 auto;padding:26px 16px 56px}
+    header{margin-bottom:14px}
+    h1{margin:0 0 6px;font-weight:800;font-size:clamp(22px,2.5vw,28px);letter-spacing:.2px}
+    .meta{color:var(--muted);font-size:var(--fs-0)}
+    a{color:var(--link);text-decoration:none} a:hover{text-decoration:underline}
 
-    /* Controls bar */
-    .controls{
-      display:flex; gap:12px; flex-wrap:wrap; align-items:center;
-      background: var(--panel); border:1px solid var(--panel-border);
-      padding: 12px; border-radius: var(--radius); box-shadow: var(--shadow);
-      position: sticky; top: 0; z-index: 10; backdrop-filter: saturate(1.2) blur(6px);
-    }
-    .controls input[type="search"],
-    .controls select{
-      background: transparent; color:var(--text);
-      border:1px solid var(--panel-border); border-radius:10px;
-      padding:8px 10px; outline:none; min-width: 180px;
-    }
-    .controls .spacer{ flex:1 1 auto; }
-    .btn{
-      border:1px solid var(--panel-border); background:var(--badge); color:var(--text);
-      padding:8px 12px; border-radius: 12px; cursor: pointer;
-    }
+    /* Controls */
+    .controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;background:var(--panel);border:1px solid var(--border);padding:12px;border-radius:14px;box-shadow:var(--shadow);position:sticky;top:0;z-index:10;backdrop-filter:saturate(1.1) blur(6px)}
+    .controls input[type="search"], .controls select{background:transparent;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:8px 10px;outline:none;min-width:180px}
+    .spacer{flex:1 1 auto}
+    .btn{border:1px solid var(--border);background:var(--badge);color:var(--text);padding:8px 12px;border-radius:12px;cursor:pointer}
 
-    /* Cards (vertical stack) */
-    .list{ display:flex; flex-direction:column; gap: var(--gap); margin-top: 18px; }
-    .card{
-      background:var(--panel); border:1px solid var(--panel-border);
-      border-radius: var(--radius); padding:18px; box-shadow: var(--shadow);
-    }
-    .topline{ display:flex; align-items:baseline; gap:10px; flex-wrap: wrap; }
-    .rank{
-      display:inline-flex; align-items:center; justify-content:center;
-      width:28px; height:28px; border-radius: 999px; background: var(--badge);
-      font-weight:700; font-size:14px;
-    }
-    .title{ font-size: clamp(18px, 2.2vw, 22px); font-weight:700; margin: 2px 0; }
-    .sub{ color:var(--muted); font-size:13.5px; }
-    .scores{ display:flex; gap:10px; margin-top:10px; font-size:13px; color:var(--muted); }
-    .badge{ background:var(--badge); border:1px solid var(--panel-border); padding:3px 8px; border-radius: 999px; }
-    .sum{ margin-top:10px; }
-    .sum p{ margin: 10px 0; }
+    /* Cards */
+    .list{display:flex;flex-direction:column;gap:var(--gap);margin-top:18px}
+    .card{position:relative;background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:var(--shadow)}
+    .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:20px 0 0 20px;background:linear-gradient(180deg,var(--accent),transparent)}
+    .topline{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap}
+    .rank{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:999px;background:var(--badge);font-weight:800;font-size:var(--fs-0)}
+    .title{font-size:var(--fs-4);font-weight:800;margin:2px 0;line-height:1.25;max-width:var(--measure)}
+    .sub{color:var(--muted);font-size:var(--fs-0);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .chip{background:var(--badge);border:1px solid var(--border);padding:3px 8px;border-radius:999px}
+    .sum{margin-top:10px;max-width:var(--measure);text-wrap:pretty;hyphens:auto}
+    .sum p{margin:10px 0}
+    .eyebrow{display:block;color:var(--muted);font-size:var(--fs-0);letter-spacing:.04em;text-transform:uppercase;margin-bottom:2px}
+    .scores{margin-top:10px;display:grid;gap:8px}
+    .bar{display:grid;grid-template-columns:76px 1fr 42px;gap:8px;align-items:center;font-size:var(--fs-0);color:var(--muted)}
+    .track{height:10px;border-radius:999px;background:var(--badge);border:1px solid var(--border);overflow:hidden}
+    .fill{height:100%;background:linear-gradient(90deg,var(--accent),#6be7cb)}
+    .expand{margin-top:8px;font-size:var(--fs-0)}
+    .expand button{background:transparent;border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:10px;cursor:pointer}
 
-    /* Responsive spacing */
-    @media (min-width: 900px){
-      .container{ padding:32px 24px 64px; }
-      .card{ padding:22px; }
-    }
+    /* Skim mode (clamps long paras) */
+    body.skim .sum p{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+    @media (min-width: 920px){ .container{padding:34px 24px 74px} .card{padding:24px} }
   </style>
 </head>
 <body>
@@ -100,18 +66,16 @@
       <p class="meta">{{ subheader }}</p>
     </header>
 
-    <!-- Controls -->
     <div class="controls" role="region" aria-label="Controls">
       <input id="q" type="search" placeholder="Search title & summary…" aria-label="Search articles" />
-      <select id="source" aria-label="Filter by source">
-        <option value="">All sources</option>
-      </select>
+      <select id="source" aria-label="Filter by source"><option value="">All sources</option></select>
       <select id="sort" aria-label="Sort">
         <option value="rank">Sort: Rank</option>
         <option value="score">Sort: Score</option>
         <option value="date">Sort: Date (new→old)</option>
       </select>
       <div class="spacer"></div>
+      <button id="skim"  class="btn" type="button" aria-pressed="false" title="Toggle skim mode">Skim</button>
       <button id="theme" class="btn" type="button" aria-pressed="false" aria-label="Toggle theme">☾/☀︎</button>
     </div>
 
@@ -123,58 +87,47 @@
   </div>
 
   <script>
-    // --- Theme toggle (persisted) ---
+    // theme
     (function(){
-      const root = document.documentElement;
-      const btn = document.getElementById('theme');
-      const saved = localStorage.getItem('theme'); // 'light' | 'dark' | null
-      if(saved){ root.setAttribute('data-theme', saved); btn.setAttribute('aria-pressed', saved==='dark'); }
-      btn.addEventListener('click', () => {
-        const curr = root.getAttribute('data-theme') || 'auto';
-        const next = (curr === 'dark') ? 'light' : 'dark';
-        root.setAttribute('data-theme', next);
-        btn.setAttribute('aria-pressed', next==='dark');
-        localStorage.setItem('theme', next);
-      });
+      const root=document.documentElement,btn=document.getElementById('theme');
+      const saved=localStorage.getItem('theme'); if(saved) root.setAttribute('data-theme',saved);
+      btn.setAttribute('aria-pressed', (saved||'auto')==='dark');
+      btn.addEventListener('click',()=>{ const curr=root.getAttribute('data-theme')||'auto';
+        const next=(curr==='dark')?'light':'dark'; root.setAttribute('data-theme',next);
+        btn.setAttribute('aria-pressed', next==='dark'); localStorage.setItem('theme',next);});
     })();
-
-    // --- Search / filter / sort (client-side, progressive enhancement) ---
+    // skim mode
     (function(){
-      const $q = document.getElementById('q');
-      const $src = document.getElementById('source');
-      const $sort = document.getElementById('sort');
-      const list = document.querySelector('.list');
-      const cards = Array.from(document.querySelectorAll('.card'));
-
-      // hydrate source dropdown
-      const uniqueSources = [...new Set(cards.map(c => c.dataset.source))].sort();
-      uniqueSources.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; $src.appendChild(o); });
-
+      const b=document.body,btn=document.getElementById('skim');
+      const saved=localStorage.getItem('skim')==='1'; if(saved) {b.classList.add('skim');btn.setAttribute('aria-pressed','true');}
+      btn.addEventListener('click',()=>{ b.classList.toggle('skim');
+        const on=b.classList.contains('skim'); btn.setAttribute('aria-pressed',on); localStorage.setItem('skim', on?'1':'0');});
+    })();
+    // search/filter/sort
+    (function(){
+      const $q=document.getElementById('q'),$src=document.getElementById('source'),$sort=document.getElementById('sort');
+      const list=document.querySelector('.list'); const cards=Array.from(document.querySelectorAll('.card'));
+      const sources=[...new Set(cards.map(c=>c.dataset.source))].sort();
+      sources.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;$src.appendChild(o);});
       function apply(){
-        const q = ($q.value || '').toLowerCase().trim();
-        const src = $src.value;
-        const sort = $sort.value;
-
-        // filter
-        cards.forEach(c => {
-          const hay = c.dataset.haystack;
-          const okQ = !q || hay.includes(q);
-          const okS = !src || c.dataset.source === src;
-          c.style.display = (okQ && okS) ? '' : 'none';
-        });
-
-        // sort (stable)
-        const visible = cards.filter(c => c.style.display !== 'none');
-        visible.sort((a,b) => {
-          if (sort === 'score') return parseFloat(b.dataset.score) - parseFloat(a.dataset.score);
-          if (sort === 'date')  return (b.dataset.date || '').localeCompare(a.dataset.date || '');
-          return parseInt(a.dataset.rank,10) - parseInt(b.dataset.rank,10); // rank
-        });
-        visible.forEach(el => list.appendChild(el));
+        const q=($q.value||'').toLowerCase().trim(),src=$src.value,sort=$sort.value;
+        cards.forEach(c=>{const hay=c.dataset.haystack; const okQ=!q||hay.includes(q); const okS=!src||c.dataset.source===src; c.style.display=(okQ&&okS)?'':'';});
+        const vis=cards.filter(c=>c.style.display!=='none');
+        vis.sort((a,b)=> sort==='score'? (parseFloat(b.dataset.score)-parseFloat(a.dataset.score))
+              : sort==='date'? (b.dataset.date||'').localeCompare(a.dataset.date||'')
+              : (parseInt(a.dataset.rank,10)-parseInt(b.dataset.rank,10)));
+        vis.forEach(el=>list.appendChild(el));
       }
-
-      [$q, $src, $sort].forEach(el => el.addEventListener('input', apply));
-      apply();
+      [$q,$src,$sort].forEach(el=>el.addEventListener('input',apply)); apply();
+    })();
+    // per-card expand
+    (function(){
+      document.addEventListener('click',e=>{
+        const btn=e.target.closest('[data-expand]'); if(!btn) return;
+        const card=btn.closest('.card'); card.classList.toggle('open');
+        btn.textContent = card.classList.contains('open') ? 'Collapse' : 'Expand';
+        if(document.body.classList.contains('skim') && card.classList.contains('open')){ /* temporarily un-skim this card */ }
+      });
     })();
   </script>
 </body>
