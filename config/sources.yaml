@@ -7,4 +7,16 @@ sources:
     url: "https://techcrunch.com/feed/"
   - name: "VentureBeat"
     url: "https://venturebeat.com/feed/"
+  - name: "arXiv cs.CL"
+    type: rss
+    url: https://export.arxiv.org/rss/cs.CL
+  - name: "Anthropic"
+    type: rss
+    url: https://www.anthropic.com/news.xml
+  - name: "Hugging Face"
+    type: rss
+    url: https://huggingface.co/blog/rss.xml
+  - name: "Meta AI"
+    type: rss
+    url: https://ai.facebook.com/blog/rss/
   # Added more sources for better coverage
