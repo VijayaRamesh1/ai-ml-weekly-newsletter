@@ -1,141 +1,198 @@
-import json
-import os
-import time
+# app/summarizer/groq_summary.py
+import json, os, re, time, hashlib
 from pathlib import Path
 from groq import Groq
 
-# Configuration
+# --- Config ---
 MODEL = os.getenv("GROQ_MODEL", "deepseek-r1-distill-llama-70b")
-CACHE_FILE = Path("data/summary_cache.json")
 TOP10_FILE = Path("data/top10.json")
+CANDIDATES = Path("data/candidates.jsonl")
+CACHE_FILE = Path("data/summary_cache.json")
+SUMMARY_TARGET_TOKENS = int(os.getenv("SUMMARY_TARGET_TOKENS", "520"))  # ~500+ tokens
+MAX_CHARS = int(os.getenv("SUMMARY_MAX_CHARS", "24000"))                # give model plenty of context
+MAX_TOKENS = int(os.getenv("SUMMARY_MAX_TOKENS", "1400"))               # room for long output
+PAUSE = float(os.getenv("SUMMARY_PAUSE_SECONDS", "0.7"))
+RETRIES = 2  # extra expansion attempts if too short
 
-# Initialize Groq client
 client = Groq(api_key=os.environ["GROQ_API_KEY"])
 
-def load_cache():
-    """Load existing summary cache."""
+# --- Helpers ---
+def load_cache() -> dict:
     if CACHE_FILE.exists():
         try:
             return json.loads(CACHE_FILE.read_text(encoding="utf-8"))
-        except:
+        except Exception:
             return {}
     return {}
 
-def save_cache(cache):
-    """Save summary cache to disk."""
+def save_cache(cache: dict) -> None:
     CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
     CACHE_FILE.write_text(json.dumps(cache, ensure_ascii=False, indent=2), encoding="utf-8")
 
-def get_article_key(title, url):
-    """Generate cache key for article."""
-    return f"{title[:50]}_{hash(url) % 10000}"
+def cache_key(title: str, url: str) -> str:
+    return hashlib.sha1(f"{title}|{url}".encode("utf-8")).hexdigest()
 
-def summarize_article(title, url, text, cache):
-    """Generate AI summary for article."""
-    cache_key = get_article_key(title, url)
-    
-    # Check cache first
-    if cache_key in cache:
-        print(f"Cache hit for: {title[:60]}...")
-        return cache[cache_key]
-    
-    print(f"Generating summary for: {title[:60]}...")
-    
+def est_tokens(text: str) -> int:
+    # crude but effective: ~1 token ≈ 0.75 words
+    words = len(re.findall(r"\w+", text))
+    return int(words / 0.75)
+
+def strip_code_fences(s: str) -> str:
+    s = s.strip()
+    s = re.sub(r"^```(json)?\s*|\s*```$", "", s, flags=re.IGNORECASE)
+    # strip potential <think>…</think> or similar reasoning wrappers
+    s = re.sub(r"<think>.*?</think>", "", s, flags=re.DOTALL | re.IGNORECASE)
+    return s.strip()
+
+def coerce_json(payload: str) -> dict:
+    s = strip_code_fences(payload)
+    # try direct parse
     try:
-        # Non-streaming call (better for CI logs + simple JSON parsing)
-        resp = client.chat.completions.create(
-            model=MODEL,
-            messages=[
-                {
-                    "role": "system", 
-                    "content": "You summarize AI/ML articles for enterprise readers. Return ONLY JSON with keys summary_p1 and summary_p2. No reasoning, no bullets. summary_p1 should be 1-2 sentences about what the article covers. summary_p2 should be 1 sentence about why it matters for business/enterprise."
-                },
-                {
-                    "role": "user", 
-                    "content": f"Title: {title}\nURL: {url}\nArticle (truncated):\n{text[:12000]}\n\nReturn JSON now."
-                }
-            ],
-            temperature=0.2,
-            max_tokens=300,
-        )
-        
-        payload = resp.choices[0].message.content.strip()
-        
-        # Try to parse JSON response
+        return json.loads(s)
+    except Exception:
+        pass
+    # try to extract the largest {...} block
+    m = re.search(r"\{.*\}", s, flags=re.DOTALL)
+    if m:
         try:
-            summary_data = json.loads(payload)
-            summary_p1 = summary_data.get("summary_p1", "")
-            summary_p2 = summary_data.get("summary_p2", "")
-        except json.JSONDecodeError:
-            # Fallback if JSON parsing fails
-            print(f"JSON parse failed, using fallback for: {title[:40]}...")
-            summary_p1 = f"What's new: {title}"
-            summary_p2 = "Why it matters: enterprise/security & business relevance at-a-glance."
-        
-        # Cache the result
-        cache[cache_key] = {
-            "summary_p1": summary_p1,
-            "summary_p2": summary_p2
+            return json.loads(m.group(0))
+        except Exception:
+            pass
+    # last resort
+    return {}
+
+def load_full_text_if_missing(title: str, url: str, text: str) -> str:
+    if text: return text
+    if not CANDIDATES.exists(): return ""
+    for line in CANDIDATES.read_text(encoding="utf-8").splitlines():
+        if not line.strip(): continue
+        obj = json.loads(line)
+        if obj.get("title") == title and obj.get("url") == url:
+            return obj.get("text", "")
+    return ""
+
+SYS_PROMPT = (
+    "You are an expert AI/ML analyst writing long-form summaries for enterprise readers. "
+    "Return ONLY valid JSON with keys summary_p1 and summary_p2 (no other keys, no preface). "
+    "Both values must be plain text paragraphs (no bullets). "
+    "Write with high factual discipline—if metrics/datasets/limits aren't stated, say 'not stated'. "
+    "Avoid chain-of-thought or hidden reasoning—just the final summaries."
+)
+
+def user_prompt(title: str, url: str, text: str, min_tokens: int) -> str:
+    return f"""
+Title: {title}
+URL: {url}
+
+Article (truncated to provide context):
+{text[:MAX_CHARS]}
+
+Write TWO paragraphs in JSON (keys: summary_p1, summary_p2) with a COMBINED length ≥ {min_tokens} tokens.
+- summary_p1 (WHAT + HOW):  cover novelty, method/architecture, data/training, evals/metrics, limitations.
+- summary_p2 (WHY IT MATTERS): map to enterprise use-cases, security/GRC implications, ops/perf, cost, ROI, adoption risks.
+- Use concrete details and numbers when available; do not invent facts. No citations or quotes.
+Return ONLY JSON.
+""".strip()
+
+def call_groq(title: str, url: str, text: str, min_tokens: int) -> dict:
+    resp = client.chat.completions.create(
+        model=MODEL,
+        messages=[
+            {"role":"system","content": SYS_PROMPT},
+            {"role":"user","content": user_prompt(title, url, text, min_tokens)}
+        ],
+        temperature=0.2,
+        top_p=0.9,
+        max_tokens=MAX_TOKENS,
+    )
+    payload = resp.choices[0].message.content or ""
+    data = coerce_json(payload)
+    if not isinstance(data, dict):
+        data = {}
+    p1 = (data.get("summary_p1") or "").strip()
+    p2 = (data.get("summary_p2") or "").strip()
+    return {"summary_p1": p1, "summary_p2": p2}
+
+def ensure_length(data: dict, title: str, url: str, text: str, min_tokens: int) -> dict:
+    comb = (data.get("summary_p1","") + " " + data.get("summary_p2","")).strip()
+    if est_tokens(comb) >= min_tokens:
+        return data
+    # Ask the model to EXPAND, preserving JSON shape
+    short_tokens = est_tokens(comb)
+    expand_by = max(50, min_tokens - short_tokens + 40)
+    resp = client.chat.completions.create(
+        model=MODEL,
+        messages=[
+            {"role":"system","content": SYS_PROMPT},
+            {"role":"user","content":
+             f"""Expand the previous summaries while keeping the same JSON keys and style.
+Target combined length ≥ {min_tokens} tokens (currently ~{short_tokens}).
+Add concrete method details, dataset names/sizes, metrics, latency/cost/security notes, and deployment caveats if present.
+Return ONLY JSON with keys summary_p1 and summary_p2.
+
+Context:
+Title: {title}
+URL: {url}
+Article (truncated):
+{text[:MAX_CHARS]}
+"""}
+        ],
+        temperature=0.25,
+        top_p=0.9,
+        max_tokens=MAX_TOKENS,
+    )
+    data2 = coerce_json(resp.choices[0].message.content or "")
+    # fallback merge if needed
+    p1 = (data2.get("summary_p1") or data.get("summary_p1","")).strip()
+    p2 = (data2.get("summary_p2") or data.get("summary_p2","")).strip()
+    return {"summary_p1": p1, "summary_p2": p2}
+
+def summarize_article(title: str, url: str, raw_text: str, cache: dict) -> dict:
+    key = cache_key(title, url)
+    if key in cache:
+        print(f"Cache hit: {title[:60]}")
+        return cache[key]
+
+    text = load_full_text_if_missing(title, url, raw_text)
+    print(f"Summarizing: {title[:60]}…")
+    data = call_groq(title, url, text, SUMMARY_TARGET_TOKENS)
+    tries = 0
+    while est_tokens((data.get("summary_p1","") + " " + data.get("summary_p2",""))) < SUMMARY_TARGET_TOKENS and tries < RETRIES:
+        data = ensure_length(data, title, url, text, SUMMARY_TARGET_TOKENS)
+        tries += 1
+        time.sleep(PAUSE)
+
+    # final guardrail
+    if not data.get("summary_p1") or not data.get("summary_p2"):
+        data = {
+            "summary_p1": f"What's new: {title}. Details not available (source text limited).",
+            "summary_p2": "Why it matters: implications for enterprise adoption, security, and business impact."
         }
-        
-        # Small delay to avoid rate limits
-        time.sleep(0.5)
-        
-        return cache[cache_key]
-        
-    except Exception as e:
-        print(f"Error summarizing {title[:40]}: {str(e)[:100]}...")
-        # Fallback summary
-        fallback = {
-            "summary_p1": f"What's new: {title}",
-            "summary_p2": "Why it matters: enterprise/security & business relevance at-a-glance."
-        }
-        cache[cache_key] = fallback
-        return fallback
+
+    cache[key] = data
+    time.sleep(PAUSE)
+    return data
 
 def main():
-    """Main function to summarize top 10 articles."""
     if not TOP10_FILE.exists():
-        print("No top10.json found. Run semantic_rank.py first.")
+        print("No top10.json found. Run the ranker first.")
         return
-    
-    # Load articles and cache
+
     articles = json.loads(TOP10_FILE.read_text(encoding="utf-8"))
     cache = load_cache()
-    
-    print(f"Processing {len(articles)} articles with Groq summarization...")
-    
-    # Summarize each article
-    for article in articles:
-        title = article.get("title", "")
-        url = article.get("url", "")
-        text = article.get("text", "")
-        
-        if not text:
-            # If no text, try to get from candidates
-            candidates_file = Path("data/candidates.jsonl")
-            if candidates_file.exists():
-                for line in candidates_file.read_text(encoding="utf-8").splitlines():
-                    if line.strip():
-                        candidate = json.loads(line)
-                        if candidate.get("title") == title and candidate.get("url") == url:
-                            text = candidate.get("text", "")
-                            break
-        
+    print(f"Processing {len(articles)} articles with Groq {MODEL}…")
+
+    for art in articles:
+        title = art.get("title","")
+        url   = art.get("url","")
+        text  = art.get("text","")
         summary = summarize_article(title, url, text, cache)
-        
-        # Update article with AI summaries
-        article["summary_p1"] = summary["summary_p1"]
-        article["summary_p2"] = summary["summary_p2"]
-    
-    # Save updated articles
+        art["summary_p1"] = summary["summary_p1"]
+        art["summary_p2"] = summary["summary_p2"]
+
     TOP10_FILE.write_text(json.dumps(articles, ensure_ascii=False, indent=2), encoding="utf-8")
-    
-    # Save cache
     save_cache(cache)
-    
-    print(f"✅ Summarized {len(articles)} articles using Groq {MODEL}")
-    print(f"Cache saved with {len(cache)} entries")
+    print(f"✅ Summarized {len(articles)} articles (target ≥ {SUMMARY_TARGET_TOKENS} tokens each)")
 
 if __name__ == "__main__":
     main()
