@@ -21,19 +21,39 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip list
+    
+    - name: Debug environment
+      run: |
+        pwd
+        ls -la
+        ls -la app/
+        ls -la config/
     
     - name: Build static issue (collect → score → render)
       run: |
+        echo "Starting collector..."
         python app/collector/rss_collect.py
-        wc -l data/candidates.jsonl || true
+        echo "Collector completed. Checking candidates..."
+        wc -l data/candidates.jsonl || echo "No candidates file found"
+        echo "Starting scorer..."
         python app/scorer/score.py
+        echo "Scorer completed. Starting builder..."
         python app/build_issue.py
+        echo "Builder completed. Checking output..."
         test -f site/dist/index.html
+        echo "Build successful!"
 
     - name: Debug artifact contents
       run: |
-        ls -la site/dist || true
-        sed -n '1,80p' site/dist/index.html || true
+        echo "Checking artifact contents..."
+        ls -la site/dist || echo "site/dist not found"
+        if [ -f site/dist/index.html ]; then
+          echo "index.html found, showing first 80 lines:"
+          sed -n '1,80p' site/dist/index.html
+        else
+          echo "index.html not found!"
+        fi
     
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
