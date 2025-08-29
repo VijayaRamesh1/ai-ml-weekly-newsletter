@@ -31,7 +31,7 @@ jobs:
           pip install -r requirements.txt
           python -c "import jinja2, yaml, feedparser, trafilatura, dateutil, rapidfuzz, httpx, fastembed, numpy, groq; print('OK: all imports present')"
 
-      - name: Build static issue (collect → rank → summarize → render)
+      - name: Build static issue (collect → rank → render)
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GROQ_MODEL: deepseek-r1-distill-llama-70b
@@ -41,8 +41,9 @@ jobs:
           wc -l data/candidates.jsonl || true
           python app/scorer/semantic_rank.py
           cat data/top10.json || true
-          python app/summarizer/groq_summary.py
-          cat data/top10.json || true
+          # Temporarily disabled due to rate limit - will re-enable after reset
+          # python app/summarizer/groq_summary.py
+          # cat data/top10.json || true
           python app/build_issue.py
           ls -la site/dist
 
