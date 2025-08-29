@@ -117,14 +117,14 @@
     "rank": 9
   },
   {
-    "title": "John Carmack's arguments against building a custom XR OS at Meta",
-    "url": "https://twitter.com/ID_AA_Carmack/status/1961172409920491849",
+    "title": "Wikipedia as a Graph",
+    "url": "https://wikigrapher.com/paths",
     "source": "Hacker News",
-    "published": "2025-08-29T16:45:21+00:00",
+    "published": "2025-08-29T16:19:56+00:00",
     "final_score": 0.2,
     "tech": 0.0,
     "app": 0.0,
-    "biz": 0.25,
+    "biz": 0.0,
     "summary_p1": "",
     "summary_p2": "Why it matters: enterprise/security & business relevance at-a-glance.",
     "rank": 10

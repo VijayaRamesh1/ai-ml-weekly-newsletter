@@ -25,9 +25,15 @@ jobs:
     - name: Build static issue (collect → score → render)
       run: |
         python app/collector/rss_collect.py
+        wc -l data/candidates.jsonl || true
         python app/scorer/score.py
         python app/build_issue.py
         test -f site/dist/index.html
+
+    - name: Debug artifact contents
+      run: |
+        ls -la site/dist || true
+        sed -n '1,80p' site/dist/index.html || true
     
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
