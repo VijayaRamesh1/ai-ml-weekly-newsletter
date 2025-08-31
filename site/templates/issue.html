@@ -1,106 +1,90 @@
 {% extends "base.html" %}
-{% block content %}
-  <!-- Section Navigation -->
-  {% if sections_nav %}
-  <nav class="sections-nav" aria-label="Newsletter sections">
-    <div class="sections-grid">
-      {% for section in sections_nav %}
-      <a href="#section-{{ section.id }}" class="section-link">
-        <span class="section-index">{{ section.index }}</span>
-        <span class="section-title">{{ section.title }}</span>
-        <span class="section-desc">{{ section.desc }}</span>
+
+{% block index %}
+  <!-- Section index (A–G) -->
+  <nav class="section-index" aria-label="Section index">
+    {% for s in sections_nav %}
+      <a class="pill" href="#{{ s.id }}" title="{{ s.desc }}">
+        <span class="badge">{{ s.index }}</span> {{ s.title }}
       </a>
-      {% endfor %}
-    </div>
+    {% endfor %}
   </nav>
-  {% endif %}
+{% endblock %}
 
-  <!-- Articles grouped by section -->
-  {% set current_section = namespace(id=None) %}
-  {% for item in items %}
-    {% if current_section.id != item.section_id %}
-      {% set current_section.id = item.section_id %}
-      <section id="section-{{ item.section_id }}" class="section-group">
-        <header class="section-header">
-          <h2 class="section-title">
-            <span class="section-index">{{ item.section_index }}</span>
-            {{ item.section_title }}
-          </h2>
-          <p class="section-description">
-            {% for section in sections_nav %}
-              {% if section.id == item.section_id %}{{ section.desc }}{% endif %}
-            {% endfor %}
-          </p>
-        </header>
-    {% endif %}
-
-    <article class="card"
-      data-rank="{{ item.rank }}"
-      data-score="{{ "%.3f"|format(item.final_score) if item.final_score else '0.000' }}"
-      data-source="{{ item.source }}"
-      data-date="{{ item.published }}"
-      data-section="{{ item.section_id }}"
-      data-haystack="{{ (item.title ~ ' ' ~ item.summary_p1 ~ ' ' ~ item.summary_p2)|lower|replace('"','')|replace("'",'') }}">
-
-      <div class="topline">
-        <span class="rank">#{{ item.rank }}</span>
-        <h3 class="title"><a href="{{ item.url }}">{{ item.title }}</a></h3>
-      </div>
-
-      <div class="sub">
-        <span>{{ item.source }}</span> •
-        <span>{{ item.published }}</span>
-        {% if item.final_score %}
-        <span class="chip" title="Composite score">Score {{ "%.2f"|format(item.final_score) }}</span>
-        {% endif %}
-      </div>
-
-      <!-- Editor Reason (if available) -->
-      {% if item.editor_reason %}
-      <div class="editor-reason">
-        <span class="eyebrow">Editor's Pick</span>
-        <p>{{ item.editor_reason }}</p>
-      </div>
+{% block content %}
+  <section class="list" aria-live="polite">
+    {% set current = None %}
+    {% for item in items %}
+      {% if current != item.section_id %}
+        {% set current = item.section_id %}
+        <h3 id="{{ item.section_id }}" class="cluster-title">{{ item.section_index }} • {{ item.section_title }}</h3>
       {% endif %}
 
-      <div class="sum">
-        <span class="eyebrow">What's new</span>
-        <p>{{ item.summary_p1 }}</p>
-        <span class="eyebrow">Why it matters</span>
-        <p>{{ item.summary_p2 }}</p>
-        <div class="expand"><button type="button" data-expand>Expand</button></div>
-      </div>
+      {% set share_id = item.section_id ~ '-' ~ item.rank %}
+      {% set domain = (item.url | replace('https://','') | replace('http://','')).split('/')[0] %}
+      {% set wtext = (item.text if item.text is defined and item.text else (item.summary_p1 ~ ' ' ~ item.summary_p2)) %}
+      {% set words = wtext.split() | length %}
+      {% set mins = (words / 220) | round(0, 'ceil') %}
 
-      {% if item.tech or item.app or item.biz %}
-      <div class="scores" aria-label="Axis scores">
-        {% if item.tech %}
-        <div class="bar">
-          <span>Tech</span>
-          <div class="track"><div class="fill" style="width: {{ (item.tech*100)|round(0,'floor') }}%"></div></div>
-          <span>{{ "%.2f"|format(item.tech) }}</span>
+      <article class="card"
+        id="{{ share_id }}"
+        data-section="{{ item.section_id }}"
+        data-rank="{{ item.rank }}"
+        data-score="{{ "%.3f"|format(item.final_score if item.final_score is defined else 0) }}"
+        data-source="{{ item.source }}"
+        data-date="{{ item.published }}"
+        data-haystack="{{ (item.title ~ ' ' ~ item.summary_p1 ~ ' ' ~ item.summary_p2)|lower|replace('"','')|replace("'",'') }}"
+      >
+        <div class="topline">
+          <span class="rank">#{{ item.rank }}</span>
+          <h2 class="title"><a href="{{ item.url }}">{{ item.title }}</a></h2>
+        </div>
+
+        <div class="sub">
+          <span>{{ item.source }}</span> •
+          <span>{{ item.published }}</span>
+          <span class="chip">Score {{ "%.2f"|format(item.final_score if item.final_score is defined else 0) }}</span>
+          <span class="chip">Domain {{ domain }}</span>
+        </div>
+
+        <!-- quick KPIs for exec scan -->
+        <div class="kpis">
+          <span class="chip">⏱ {{ mins }} min</span>
+          <a class="chip" href="#{{ share_id }}" data-copy="#{{ share_id }}" title="Copy link">🔗 Copy link</a>
+          <a class="chip" href="{{ item.url }}" target="_blank" rel="noopener">↗ Open original</a>
+        </div>
+
+        {% if item.editor_reason is defined and item.editor_reason %}
+          <div class="reason">🏷️ <strong>Editor's pick:</strong> {{ item.editor_reason }}</div>
+        {% endif %}
+
+        <div class="sum">
+          <span class="eyebrow">What's new</span>
+          <p>{{ item.summary_p1 }}</p>
+          <span class="eyebrow">Why it matters</span>
+          <p>{{ item.summary_p2 }}</p>
+        </div>
+
+        {% if item.tech is defined %}
+        <div class="scores" aria-label="Axis scores">
+          <div class="bar">
+            <span>Technical</span>
+            <div class="track"><div class="fill" style="width: {{ (item.tech*100)|round(0,'floor') }}%"></div></div>
+            <span>{{ "%.2f"|format(item.tech) }}</span>
+          </div>
+          <div class="bar">
+            <span>Applicability</span>
+            <div class="track"><div class="fill" style="width: {{ (item.app*100)|round(0,'floor') }}%"></div></div>
+            <span>{{ "%.2f"|format(item.app) }}</span>
+          </div>
+          <div class="bar">
+            <span>Business</span>
+            <div class="track"><div class="fill" style="width: {{ (item.biz*100)|round(0,'floor') }}%"></div></div>
+            <span>{{ "%.2f"|format(item.biz) }}</span>
+          </div>
         </div>
         {% endif %}
-        {% if item.app %}
-        <div class="bar">
-          <span>Applicability</span>
-          <div class="track"><div class="fill" style="width: {{ (item.app*100)|round(0,'floor') }}%"></div></div>
-          <span>{{ "%.2f"|format(item.app) }}</span>
-        </div>
-        {% endif %}
-        {% if item.biz %}
-        <div class="bar">
-          <span>Business</span>
-          <div class="track"><div class="fill" style="width: {{ (item.biz*100)|round(0,'floor') }}%"></div></div>
-          <span>{{ "%.2f"|format(item.biz) }}</span>
-        </div>
-        {% endif %}
-      </div>
-      {% endif %}
-
-    </article>
-
-    {% if loop.index == items|length or (loop.index < items|length and items[loop.index].section_id != item.section_id) %}
-    </section>
-    {% endif %}
-  {% endfor %}
+      </article>
+    {% endfor %}
+  </section>
 {% endblock %}
