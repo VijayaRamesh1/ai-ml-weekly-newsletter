@@ -23,7 +23,7 @@ sections:
     description: Vendor releases, pricing, GA announcements, integrations.
     match:
       sources: ["OpenAI News","Google AI Blog","NVIDIA Blog","AWS Machine Learning Blog"]
-      domains: ["openai.com","ai.googleblog.com","blogs.nvidia.com","aws.amazon.com"]
+      domains: ["openai.com","blog.google","blogs.nvidia.com","aws.amazon.com"]
       keywords: ["launch","shipping","GA","general availability","pricing","preview","integration","SDK","release"]
 
   - id: security   # D
@@ -41,7 +41,7 @@ sections:
     description: Practical builds, RAG patterns, reference templates.
     match:
       sources: ["AWS Machine Learning Blog","Google AI Blog","VentureBeat (AI)","TechCrunch (AI)"]
-      domains: ["medium.com","dev.to","github.com","aws.amazon.com","ai.googleblog.com"]
+      domains: ["medium.com","dev.to","github.com","aws.amazon.com","blog.google"]
       keywords: ["RAG","case study","playbook","reference","implementation","how we built","template","solution","architecture"]
 
   - id: infra      # F
@@ -50,7 +50,7 @@ sections:
     description: Serving, inference, KV, quantization, throughput/latency.
     match:
       sources: ["NVIDIA Blog","AWS Machine Learning Blog","Google AI Blog"]
-      domains: ["blogs.nvidia.com","pytorch.org","tensorflow.org","developer.nvidia.com","aws.amazon.com","ai.googleblog.com"]
+      domains: ["blogs.nvidia.com","pytorch.org","tensorflow.org","developer.nvidia.com","aws.amazon.com","blog.google"]
       keywords: ["throughput","latency","KV cache","Triton","CUDA","vLLM","quantization","LoRA","TensorRT","A100","H100","performance","scaling"]
 
   - id: research   # G
@@ -58,9 +58,9 @@ sections:
     title: Foundational Research & Emerging Trends
     description: Research papers, breakthroughs, and emerging AI trends for business leaders.
     match:
-      sources: ["Papers With Code","Google AI Research Blog","DeepMind Blog","Anthropic Research","MIT Technology Review (AI)","VentureBeat (AI)"]
-      domains: ["paperswithcode.com","ai.googleblog.com","deepmind.com","anthropic.com","technologyreview.com","venturebeat.com"]
-      keywords: ["research","paper","novel","breakthrough","sota","benchmark","dataset","theory","scaling law","transformer","federated","responsible AI","study","analysis","trends"]
+      sources: ["Google AI Blog","Distill Research","Google DeepMind","NVIDIA AI Research","AWS Machine Learning Blog","MIT Technology Review (AI)","VentureBeat (AI)"]
+      domains: ["blog.google","distill.pub","blogs.nvidia.com","aws.amazon.com","technologyreview.com","venturebeat.com"]
+      keywords: ["research","paper","novel","breakthrough","sota","benchmark","dataset","theory","scaling law","transformer","federated","responsible AI","study","analysis","trends","machine learning","deep learning"]
 
 order: [exec, strategy, launches, security, applied, infra, research]
 
