@@ -1,0 +1,9 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="wing" x1="0" x2="1">
+      <stop offset="0" stop-color="#0e1726"/>
+      <stop offset="1" stop-color="#d4a72c"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#wing)" d="M8 40c14-1 20-8 26-18 4-7 10-10 22-10-9 5-14 9-18 16 6-3 12-4 18-3-10 4-16 9-22 16-5 6-10 11-20 11-4 0-6-4-6-12z"/>
+</svg>

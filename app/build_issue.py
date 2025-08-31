@@ -21,9 +21,9 @@ def main():
     env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
     tmpl = env.get_template("issue.html")
     html = tmpl.render(
-        title="AI/ML Weekly Newsletter",
-        header="AI/ML Weekly — Section Picks",
-        subheader="Top picks for leaders: Executive, Strategy, Launches, Security, Applied, Infra, Research.",
+        title="Jaṭāyū Index — The Executive AI Brief",
+        header="Jaṭāyū Index",
+        subheader="A weekly executive brief on AI — strategy, launches, security, applied engineering, infra, and research.",
         generated_at=datetime.now().strftime("%Y-%m-%d %H:%M"),
         items=items,
         sections_nav=[{"id":s["id"],"index":s["index"],"title":s["title"],"desc":s["description"]} for s in sections_nav],
