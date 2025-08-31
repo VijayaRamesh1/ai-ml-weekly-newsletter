@@ -25,6 +25,27 @@ sources:
     url: "https://aws.amazon.com/blogs/machine-learning/feed/"
     include_keywords: ["research", "paper", "novel", "breakthrough", "sota", "machine learning", "deep learning", "ai"]
     max_items: 15
+  # arXiv Research Papers (AI/ML/LLM focused)
+  - name: "arXiv AI Papers"
+    type: rss
+    url: "https://rss.arxiv.org/rss/cs.AI"
+    include_keywords: ["large language model", "llm", "transformer", "neural", "deep learning", "machine learning", "artificial intelligence", "reinforcement learning", "natural language processing", "nlp"]
+    max_items: 20
+  - name: "arXiv Machine Learning Papers"
+    type: rss
+    url: "https://rss.arxiv.org/rss/cs.LG"
+    include_keywords: ["large language model", "llm", "transformer", "neural", "deep learning", "machine learning", "artificial intelligence", "reinforcement learning", "natural language processing", "nlp"]
+    max_items: 20
+  - name: "arXiv NLP Papers"
+    type: rss
+    url: "https://rss.arxiv.org/rss/cs.CL"
+    include_keywords: ["large language model", "llm", "transformer", "neural", "deep learning", "machine learning", "artificial intelligence", "reinforcement learning", "natural language processing", "nlp"]
+    max_items: 20
+  - name: "arXiv Computer Vision Papers"
+    type: rss
+    url: "https://rss.arxiv.org/rss/cs.CV"
+    include_keywords: ["large language model", "llm", "transformer", "neural", "deep learning", "machine learning", "artificial intelligence", "computer vision", "image", "video"]
+    max_items: 15
 
   # Strategic & Business Impact
   - { name: "MIT Technology Review (AI)", type: rss, url: "https://www.technologyreview.com/topic/artificial-intelligence/feed/" }

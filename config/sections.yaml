@@ -58,9 +58,9 @@ sections:
     title: Foundational Research & Emerging Trends
     description: Research papers, breakthroughs, and emerging AI trends for business leaders.
     match:
-      sources: ["Google AI Blog","Distill Research","Google DeepMind","NVIDIA AI Research","AWS Machine Learning Blog","MIT Technology Review (AI)","VentureBeat (AI)"]
-      domains: ["blog.google","distill.pub","blogs.nvidia.com","aws.amazon.com","technologyreview.com","venturebeat.com"]
-      keywords: ["research","paper","novel","breakthrough","sota","benchmark","dataset","theory","scaling law","transformer","federated","responsible AI","study","analysis","trends","machine learning","deep learning"]
+      sources: ["Google AI Blog","Distill Research","Google DeepMind","NVIDIA AI Research","AWS Machine Learning Blog","arXiv AI Papers","arXiv Machine Learning Papers","arXiv NLP Papers","arXiv Computer Vision Papers","MIT Technology Review (AI)","VentureBeat (AI)"]
+      domains: ["blog.google","distill.pub","blogs.nvidia.com","aws.amazon.com","arxiv.org","technologyreview.com","venturebeat.com"]
+      keywords: ["research","paper","novel","breakthrough","sota","benchmark","dataset","theory","scaling law","transformer","federated","responsible AI","study","analysis","trends","machine learning","deep learning","large language model","llm","neural","reinforcement learning","natural language processing","nlp"]
 
 order: [exec, strategy, launches, security, applied, infra, research]
 
