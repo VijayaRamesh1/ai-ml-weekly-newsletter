@@ -1,33 +1,15 @@
 {% extends "base.html" %}
-
-{% block index %}
-  <!-- Section index (A–G) -->
-  <nav class="section-index" aria-label="Section index">
-    {% for s in sections_nav %}
-      <a class="pill" href="#{{ s.id }}" title="{{ s.desc }}">
-        <span class="badge">{{ s.index }}</span> {{ s.title }}
-      </a>
-    {% endfor %}
-  </nav>
-{% endblock %}
-
 {% block content %}
   <section class="list" aria-live="polite">
     {% set current = None %}
     {% for item in items %}
       {% if current != item.section_id %}
         {% set current = item.section_id %}
-        <h3 id="{{ item.section_id }}" class="cluster-title">{{ item.section_index }} • {{ item.section_title }}</h3>
+        <!-- prominent category anchor -->
+        <h3 id="{{ item.section_id }}" class="section-title">{{ item.section_title }}</h3>
       {% endif %}
 
-      {% set share_id = item.section_id ~ '-' ~ item.rank %}
-      {% set domain = (item.url | replace('https://','') | replace('http://','')).split('/')[0] %}
-      {% set wtext = (item.text if item.text is defined and item.text else (item.summary_p1 ~ ' ' ~ item.summary_p2)) %}
-      {% set words = wtext.split() | length %}
-      {% set mins = (words / 220) | round(0, 'ceil') %}
-
       <article class="card"
-        id="{{ share_id }}"
         data-section="{{ item.section_id }}"
         data-rank="{{ item.rank }}"
         data-score="{{ "%.3f"|format(item.final_score if item.final_score is defined else 0) }}"
@@ -35,55 +17,12 @@
         data-date="{{ item.published }}"
         data-haystack="{{ (item.title ~ ' ' ~ item.summary_p1 ~ ' ' ~ item.summary_p2)|lower|replace('"','')|replace("'",'') }}"
       >
-        <div class="topline">
-          <span class="rank">#{{ item.rank }}</span>
-          <h2 class="title"><a href="{{ item.url }}">{{ item.title }}</a></h2>
-        </div>
-
-        <div class="sub">
-          <span>{{ item.source }}</span> •
-          <span>{{ item.published }}</span>
-          <span class="chip">Score {{ "%.2f"|format(item.final_score if item.final_score is defined else 0) }}</span>
-          <span class="chip">Domain {{ domain }}</span>
-        </div>
-
-        <!-- quick KPIs for exec scan -->
-        <div class="kpis">
-          <span class="chip">⏱ {{ mins }} min</span>
-          <a class="chip" href="#{{ share_id }}" data-copy="#{{ share_id }}" title="Copy link">🔗 Copy link</a>
-          <a class="chip" href="{{ item.url }}" target="_blank" rel="noopener">↗ Open original</a>
-        </div>
-
-        {% if item.editor_reason is defined and item.editor_reason %}
-          <div class="reason">🏷️ <strong>Editor's pick:</strong> {{ item.editor_reason }}</div>
-        {% endif %}
-
+        <div class="meta">#{{ item.rank }} • {{ item.source }} • {{ item.published }}</div>
+        <h2 class="title"><a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">{{ item.title }}</a></h2>
         <div class="sum">
-          <span class="eyebrow">What's new</span>
           <p>{{ item.summary_p1 }}</p>
-          <span class="eyebrow">Why it matters</span>
           <p>{{ item.summary_p2 }}</p>
         </div>
-
-        {% if item.tech is defined %}
-        <div class="scores" aria-label="Axis scores">
-          <div class="bar">
-            <span>Technical</span>
-            <div class="track"><div class="fill" style="width: {{ (item.tech*100)|round(0,'floor') }}%"></div></div>
-            <span>{{ "%.2f"|format(item.tech) }}</span>
-          </div>
-          <div class="bar">
-            <span>Applicability</span>
-            <div class="track"><div class="fill" style="width: {{ (item.app*100)|round(0,'floor') }}%"></div></div>
-            <span>{{ "%.2f"|format(item.app) }}</span>
-          </div>
-          <div class="bar">
-            <span>Business</span>
-            <div class="track"><div class="fill" style="width: {{ (item.biz*100)|round(0,'floor') }}%"></div></div>
-            <span>{{ "%.2f"|format(item.biz) }}</span>
-          </div>
-        </div>
-        {% endif %}
       </article>
     {% endfor %}
   </section>

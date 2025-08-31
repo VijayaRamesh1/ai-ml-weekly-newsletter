@@ -4,148 +4,143 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{{ title }}</title>
-  
-  <!-- SEO & Social Cards -->
-  <meta name="description" content="Jaṭāyū Index — an executive AI brief: strategy, launches, security, applied engineering, infrastructure, research.">
-  <meta property="og:site_name" content="Jaṭāyū Index">
-  <meta property="og:title" content="Jaṭāyū Index — The Executive AI Brief">
-  <meta property="og:description" content="Actionable AI intelligence for CEOs & CTOs.">
-    <meta name="twitter:title" content="Jaṭāyū Index — The Executive AI Brief">
-  
-  <!-- Favicons -->
-  <link rel="icon" href="/ji-wing.svg" type="image/svg+xml">
-  <link rel="alternate icon" href="/favicon.ico">
-  
-  <!-- Type: condensed headlines + clean UI font -->
+
+  <!-- Editorial serif for masthead + modern UI font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@700;800&family=Inter:wght@400;600;700;800&family=Noto+Serif:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@600;700;800&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      /* Light (default) */
-      --bg:#fbfcfe; --ink:#0b1426; --muted:#5d6678;
-      --panel:#ffffff; --panel2:#f5f7fb; --rule:#e6ebf2;
-      --link:#0a5bd3; --accent:#101820; --accent2:#ff0040;
-      --container:1120px; --radius:14px; --shadow:0 1px 0 rgba(9,30,66,.05),0 10px 28px rgba(9,30,66,.08);
-      --fs-0:12px; --fs-1:14px; --fs-2:16px; --fs-3:18px; --fs-4:22px; --fs-5:32px; --fs-6:48px;
-      --measure:70ch;
+      /* Light */
+      --bg:#f7f7f5; --ink:#0e1726; --muted:#606b80;
+      --panel:#ffffff; --rule:#d9dee7;
+      --accent:#0e1726;        /* ink for rules/borders */
+      --link:#0a5bd3;
+      --container:1080px;
+      --nav-h: 54px;           /* sticky category nav height */
     }
     [data-theme="dark"]{
       --bg:#0b0f17; --ink:#eaf1fa; --muted:#9fb0c8;
-      --panel:#0f1522; --panel2:#121a2a; --rule:#1a2638;
-      --link:#9ac6ff; --accent:#eaf1fa; --accent2:#f15b6c;
-      --shadow:0 10px 28px rgba(0,0,0,.45);
+      --panel:#0f1522; --rule:#1b2638;
+      --accent:#eaf1fa; --link:#9ac6ff;
     }
 
     html,body{height:100%}
+    html{scroll-behavior:smooth} /* smooth anchor scroll */
     body{
       margin:0; background:var(--bg); color:var(--ink);
-      font: var(--fs-2)/1.7 "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Noto Sans", sans-serif;
+      font: 16px/1.72 "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Noto Sans", sans-serif;
       -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
     }
-    a{color:var(--link); text-decoration:none} a:hover{text-decoration:underline}
     .wrap{max-width:var(--container); margin:0 auto; padding:0 16px}
 
-    /* ============= Masthead ============= */
-    .masthead{border-bottom:2px solid var(--ink); padding:10px 0 8px; margin-bottom:10px}
+    /* ----- Masthead (centered, Nice News style) ----- */
+    .mast{
+      background:var(--bg);
+      padding:18px 0 10px;
+      border-bottom:1px solid var(--rule);
+    }
+    .mast .inner{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
     .brand{
-      font: 800 28px/1 "Newsreader","Noto Serif",serif;
-      display:inline-flex; align-items:center; gap:6px; color:var(--accent);
+      margin:0; flex:1; text-align:center;
+      font: 800 28px/1 "Newsreader", serif; letter-spacing:.5px;
     }
-    .brand a { color: inherit; }
-    .brand svg { flex-shrink: 0; }
-
-    /* ============= Sub Nav (kicker) ============= */
-    .subnav{
-      display:flex; align-items:center; gap:20px; padding:10px 0; border-bottom:2px solid var(--ink);
-      text-transform:uppercase; font: 600 12px/1 "Oswald", sans-serif; letter-spacing:.08em;
+    .brand a{ color:var(--ink); text-decoration:none }
+    .icon-btn, .subscribe{
+      font:600 12px/1 "Inter"; letter-spacing:.08em; text-transform:uppercase;
+      border:1.5px solid var(--accent); color:var(--ink);
+      background:transparent; border-radius:8px; padding:8px 10px; cursor:pointer;
     }
-    .tag{border:2px solid var(--ink); padding:4px 8px}
-    .meta{color:var(--muted); font-size:12px}
+    .left, .right{width:90px; display:flex; align-items:center}
+    .left{justify-content:flex-start} .right{justify-content:flex-end}
 
-    /* ============= Controls strip (sticky) ============= */
+    /* ----- Category nav (sticky, double rule) ----- */
+    .cats{
+      position:sticky; top:0; z-index:40;
+      background:var(--bg);
+      border-top:3px double var(--accent);
+      border-bottom:1px solid var(--rule);
+    }
+    .cats .row{
+      display:flex; gap:26px; overflow:auto; white-space:nowrap;
+      align-items:center; justify-content:center; padding:12px 8px;
+      text-transform:uppercase; letter-spacing:.10em; font:700 12px/1 "Inter";
+    }
+    .cats a{
+      color:var(--ink); text-decoration:none; padding:6px 0; position:relative;
+    }
+    .cats a::after{
+      content:""; position:absolute; left:0; right:0; bottom:-10px; height:3px;
+      background:transparent; transition:background .15s ease;
+    }
+    .cats a:hover::after{ background:var(--ink) }
+    .cats a.active{ color:var(--ink); }
+    .cats a.active::after{ background:var(--ink) }
+
+    /* ----- Controls (filters) ----- */
     .controls{
-      position:sticky; top:0; z-index:20; background:var(--panel); border:1px solid var(--rule);
-      border-radius:12px; padding:10px; margin:12px 0 8px; box-shadow:var(--shadow); display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      position:sticky; top:calc(var(--nav-h) + 0px); z-index:30;
+      background:var(--panel); border:1px solid var(--rule); border-radius:12px;
+      padding:10px; margin:12px 0; display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      box-shadow:0 1px 0 rgba(9,30,66,.04), 0 10px 28px rgba(9,30,66,.06);
     }
     .controls input[type="search"], .controls select{
-      background:var(--panel2); border:1px solid var(--rule); border-radius:10px; padding:8px 10px; min-width:180px; color:var(--ink);
-      font-family: inherit; font-size: 14px; cursor: pointer;
+      background:#fafafa; border:1px solid var(--rule); border-radius:10px; padding:8px 10px; min-width:180px; color:var(--ink);
     }
-    .controls select:hover { border-color: var(--accent2); }
-    .controls select:focus { outline: none; border-color: var(--accent2); box-shadow: 0 0 0 2px rgba(255, 0, 64, 0.1); }
-    .controls .spacer{flex:1 1 auto}
-    .btn{border:1px solid var(--rule); background:var(--panel2); color:var(--ink); padding:8px 12px; border-radius:10px; cursor:pointer}
+    .btn{border:1px solid var(--accent); background:transparent; color:var(--ink); padding:8px 12px; border-radius:8px; cursor:pointer}
+    .spacer{flex:1 1 auto}
 
-    /* ============= Headline & card primitives ============= */
-    .headline{
-      font-family:"Oswald", sans-serif; font-weight:700; line-height:1.05;
-      font-size:clamp(28px, 5.4vw, var(--fs-6));
-      margin:6px 0 6px; color:var(--ink);
-      text-decoration-thickness:3px; text-underline-offset:6px;
-      text-decoration-color:var(--accent2);
-      text-decoration-line: underline;
+    /* ----- Section headings & cards ----- */
+    .section-title{
+      margin:26px 0 8px; text-align:center;
+      text-transform:uppercase; letter-spacing:.12em; color:var(--muted); font-weight:800; font-size:12px;
+      border-top:1px solid var(--rule); padding-top:10px;
+      scroll-margin-top: calc(var(--nav-h) + 72px); /* anchor offset under sticky bars */
     }
-    .h2{font-family:"Oswald"; font-weight:700; line-height:1.1; font-size:clamp(20px, 3vw, 28px); margin:6px 0}
-    .kicker{font:600 11px/1 "Oswald"; letter-spacing:.12em; color:var(--muted); text-transform:uppercase}
-
-    .grid{display:grid; gap:18px}
-    @media (min-width: 1020px){ .grid{grid-template-columns: 2fr 1fr;} }
-
-    .hero, .sidebox, .card{
-      background:var(--panel); border:1px solid var(--rule); border-radius:12px; padding:14px; box-shadow:var(--shadow);
-    }
-    .card .title{font-family:"Oswald"; font-weight:700; font-size:clamp(18px,2.2vw,22px); line-height:1.2; margin:4px 0}
-    .byline{color:var(--muted); font-size:12px}
-    .deck{max-width:var(--measure); margin:8px 0 0}
-
-    /* section index pills under hero */
-    .section-index{display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 4px}
-    .pill{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border:1px solid var(--rule); background:var(--panel2); border-radius:999px; text-decoration:none; color:var(--ink)}
-    .pill:hover{background:var(--ink); color:var(--panel2)}
-    .pill .badge{font:700 11px/1 "Oswald"; border:1px solid var(--ink); padding:2px 5px}
-
-    /* content list area */
     .list{display:flex; flex-direction:column; gap:14px; margin-top:8px}
-    .cluster-title{margin:18px 0 0; border-top:1px solid var(--rule); padding-top:10px; color:var(--muted); font:700 12px/1 "Oswald"; letter-spacing:.1em; text-transform:uppercase}
+    .card{
+      background:var(--panel); border:1px solid var(--rule); border-radius:12px; padding:16px;
+      box-shadow:0 1px 0 rgba(9,30,66,.04), 0 10px 28px rgba(9,30,66,.06);
+    }
+    .title{font: 800 22px/1.25 "Newsreader", serif; margin:4px 0}
+    .meta{color:var(--muted); font-size:12px}
+    .sum{max-width:70ch} .sum p{margin:10px 0}
+    body.skim .sum p{display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden}
 
-    /* skim mode */
-    body.skim .card .sum p{display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden}
-
-    /* utilities */
-    .hide{display:none}
+    footer{color:var(--muted); font-size:12px; text-align:center; margin:18px 0 40px}
   </style>
 </head>
 <body>
   <div class="wrap">
     <!-- Masthead -->
-    <div class="masthead">
-      <h1 class="brand" title="Jaṭāyū Index">
-        <a href="#top" style="display:inline-flex;gap:10px;align-items:center;text-decoration:none">
-          <!-- wing mark (kept) -->
-          <svg width="28" height="28" viewBox="0 0 64 64" aria-hidden="true">
-            <defs><linearGradient id="wing" x1="0" x2="1">
-              <stop offset="0" stop-color="#0e1726"/><stop offset="1" stop-color="#d4a72c"/>
-            </defs>
-            <path fill="url(#wing)" d="M8 40c14-1 20-8 26-18 4-7 10-10 22-10-9 5-14 9-18 16 6-3 12-4 18-3-10 4-16 9-22 16-5 6-10 11-20 11-4 0-6-4-6-12z"/>
-          </svg>
-          <span>Jaṭāyū Index</span>
-        </a>
-      </h1>
-    </div>
+    <header class="mast">
+      <div class="inner">
+        <div class="left">
+          <button class="icon-btn" id="menuBtn" aria-label="Menu">≡</button>
+        </div>
+        <h1 class="brand"><a href="#top">{{ header }}</a></h1>
+        <div class="right">
+          <button class="icon-btn" id="searchBtn" aria-label="Search">🔍</button>
+          <a class="subscribe" href="{{ subscribe_url|default('#') }}" style="margin-left:8px">Subscribe</a>
+        </div>
+      </div>
+    </header>
 
-    <!-- Sub nav (like WIRED's 'Today's Picks' strip) -->
-    <div class="subnav">
-      <span class="tag">Today's Picks</span>
-      <span class="meta">Top stories chosen for senior leaders</span>
-    </div>
+    <!-- Category navigation (anchors to sections) -->
+    <nav class="cats" style="--nav-h:54px;">
+      <div class="row" id="catRow">
+        {% for s in sections_nav %}
+          <a href="#{{ s.id }}" data-sec="{{ s.id }}">{{ s.title }}</a>
+        {% endfor %}
+      </div>
+    </nav>
 
-    {% block magazine %}{% endblock %}
-
-    <!-- Controls (sticky) for deeper browsing -->
-    <div class="controls" role="region" aria-label="Filters">
-      <input id="q" type="search" placeholder="Search title & summary…" aria-label="Search all articles" />
+    <!-- Filters -->
+    <div id="filters" class="controls" role="region" aria-label="Filters">
+      <input id="q" type="search" placeholder="Search title & summary…" aria-label="Search articles" />
       <select id="source" aria-label="Filter by source"><option value="">All sources</option></select>
       <select id="section" aria-label="Filter by section"><option value="">All sections</option></select>
       <select id="sort" aria-label="Sort">
@@ -155,83 +150,49 @@
       </select>
       <div class="spacer"></div>
       <button id="skim" class="btn" aria-pressed="false">Skim</button>
+      <button id="theme" class="btn" aria-pressed="false">☾/☀︎</button>
     </div>
 
     {% block content %}{% endblock %}
 
-    <footer class="byline" style="margin:18px 0 40px;">Generated {{ generated_at }} • Designed for executive reading</footer>
+    <footer>Generated {{ generated_at }} • Anchored section navigation</footer>
   </div>
 
   <script>
-    // Theme
+    // Theme toggle
     (function(){
       const root=document.documentElement,btn=document.getElementById('theme');
+      if(!btn) return;
       const saved=localStorage.getItem('theme'); if(saved) root.setAttribute('data-theme',saved);
       btn.setAttribute('aria-pressed',(saved||'light')==='dark');
       btn.addEventListener('click',()=>{ const t=root.getAttribute('data-theme')||'light';
-        const n=(t==='dark')?'light':'dark'; root.setAttribute('data-theme',n);
+        const n=t==='dark'?'light':'dark'; root.setAttribute('data-theme',n);
         btn.setAttribute('aria-pressed', n==='dark'); localStorage.setItem('theme',n);});
     })();
 
-    // Skim
+    // Skim mode
     (function(){
       const b=document.body,btn=document.getElementById('skim');
+      if(!btn) return;
       const saved=localStorage.getItem('skim')==='1'; if(saved){ b.classList.add('skim'); btn.setAttribute('aria-pressed','true');}
       btn.addEventListener('click',()=>{ b.classList.toggle('skim'); const on=b.classList.contains('skim'); btn.setAttribute('aria-pressed',on); localStorage.setItem('skim', on?'1':'0');});
     })();
 
-    // Search/filter/sort
+    // Filters + search
     (function(){
-      const $q=document.getElementById('q'), $src=document.getElementById('source'), $sec=document.getElementById('section'), $sort=document.getElementById('sort');
+      const $q=document.getElementById('q'),
+            $src=document.getElementById('source'),
+            $sec=document.getElementById('section'),
+            $sort=document.getElementById('sort');
       const list=document.querySelector('.list');
       const cards=[...document.querySelectorAll('.card')];
 
-      // Hydrate dropdowns with better error handling and user-friendly labels
-      function populateDropdowns() {
-        // Clear existing options (keep the default "All" option)
-        $src.innerHTML = '<option value="">All sources</option>';
-        $sec.innerHTML = '<option value="">All sections</option>';
-        
-        // Get unique sources and sections
-        const sources = [...new Set(cards.map(c => c.dataset.source).filter(Boolean))].sort();
-        const sections = [...new Set(cards.map(c => c.dataset.section).filter(Boolean))].sort();
-        
-        console.log('Sources found:', sources);
-        console.log('Sections found:', sections);
-        
-        // Populate source dropdown
-        sources.forEach(s => {
-          const o = document.createElement('option');
-          o.value = s;
-          o.textContent = s;
-          $src.appendChild(o);
-        });
-        
-        // Populate section dropdown with friendly names
-        const sectionNames = {
-          'exec': 'Executive Briefing',
-          'strategy': 'Strategy & Market',
-          'launches': 'Launches & Products',
-          'security': 'Security & Safety',
-          'applied': 'Applied Engineering',
-          'infra': 'Infrastructure',
-          'research': 'Research & Trends'
-        };
-        
-        sections.forEach(s => {
-          const o = document.createElement('option');
-          o.value = s;
-          o.textContent = sectionNames[s] || s.charAt(0).toUpperCase() + s.slice(1);
-          $sec.appendChild(o);
-        });
-        
-        // Update dropdown counts
-        $src.querySelector('option[value=""]').textContent = `All sources (${sources.length})`;
-        $sec.querySelector('option[value=""]').textContent = `All sections (${sections.length})`;
-      }
+      // hydrate dropdowns
+      [...new Set(cards.map(c=>c.dataset.source))].sort().forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;$src.appendChild(o);});
+      [...new Set(cards.map(c=>c.dataset.section))].filter(Boolean).forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;$sec.appendChild(o);});
 
       function apply(){
-        const q=($q.value||'').toLowerCase().trim(),
+        const q=($q?.value||"").toLowerCase().trim(),
               src=$src.value, sec=$sec.value, sort=$sort.value;
         cards.forEach(c=>{
           const okQ=!q || c.dataset.haystack.includes(q);
@@ -247,17 +208,31 @@
             : (a.dataset.section||'').localeCompare(b.dataset.section||'') || (parseInt(a.dataset.rank,10)-parseInt(b.dataset.rank,10)));
         vis.forEach(el=>list.appendChild(el));
       }
-      
-      // Initialize dropdowns
-      populateDropdowns();
-      
-      // Add event listeners
-      [$q, $src, $sec, $sort].forEach(el => {
-        if (el) el.addEventListener('input', apply);
-      });
-      
-      // Initial apply
+      [$q,$src,$sec,$sort].forEach(el=> el && el.addEventListener('input',apply));
       apply();
+    })();
+
+    // Scroll-spy: highlight active category as you scroll sections
+    (function(){
+      const links=[...document.querySelectorAll('.cats a')];
+      if(!links.length) return;
+      const map=new Map(links.map(a=>[a.dataset.sec, a]));
+      const secs=[...document.querySelectorAll('h3.section-title')];
+      const io=new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+          if(e.isIntersecting){
+            links.forEach(l=>l.classList.toggle('active', l.dataset.sec===e.target.id));
+            history.replaceState(null,"", '#'+e.target.id);
+          }
+        });
+      },{root: null, rootMargin:"-50% 0px -45% 0px", threshold:0});
+      secs.forEach(s=>io.observe(s));
+    })();
+
+    // Search icon focuses search box
+    (function(){
+      const btn=document.getElementById('searchBtn'), q=document.getElementById('q');
+      if(btn && q){ btn.addEventListener('click',()=>{ q.scrollIntoView({behavior:'smooth', block:'center'}); setTimeout(()=>q.focus(),400); }); }
     })();
   </script>
 </body>
