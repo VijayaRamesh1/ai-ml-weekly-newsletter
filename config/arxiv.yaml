@@ -1,0 +1,27 @@
+categories:        # tune anytime
+  - cs.AI
+  - cs.CL
+  - cs.LG
+  - stat.ML
+  # - cs.CV        # add if you want vision
+days_back: 8       # grab a full week + weekend cushion
+max_results: 400   # total results across all cats (API returns newest first)
+min_chars: 650     # ignore ultra-short abstracts
+include_keywords:  # optional — only keep if any term appears (lowercase match)
+  - ai
+  - machine learning
+  - llm
+  - language model
+  - transformer
+  - retrieval
+  - safety
+  - alignment
+  - neural
+  - deep learning
+  - reinforcement learning
+  - natural language processing
+  - nlp
+exclude_keywords:  # optional — drop noise
+  - corrigendum
+  - editorial
+  - erratum

@@ -4,6 +4,8 @@ on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
+  schedule:
+    - cron: "0 11 * * TUE"   # Tuesdays 11:00 UTC; adjust to your audience
 
 permissions:
   contents: read
@@ -40,7 +42,8 @@ jobs:
           DATA_FILE: data/selected.json
         run: |
           set -euxo pipefail
-          python app/collector/rss_collect.py
+          python app/collector/rss_collect.py           # existing sources (MIT TR, HBR, etc.)
+          python app/collector/arxiv_api_collect.py     # NEW: reliable arXiv weekly
           python app/editorial/select_topN_per_section.py
           python app/summarizer/gemini_summary.py
           python app/build_issue.py
