@@ -7,4 +7,4 @@ rapidfuzz
 httpx
 fastembed
 numpy
-groq
+google-generativeai
