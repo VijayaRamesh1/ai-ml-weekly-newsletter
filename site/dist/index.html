@@ -1,331 +1,591 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" data-theme="auto">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Weekly Newsletter</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background: #f8f9fa;
-            color: #333;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 2.5em;
-        }
-        .subheader {
-            text-align: center;
-            color: #7f8c8d;
-            margin-bottom: 30px;
-            font-size: 1.1em;
-        }
-        .generated {
-            text-align: center;
-            color: #95a5a6;
-            font-size: 0.9em;
-            margin-bottom: 40px;
-            font-style: italic;
-        }
-        .item {
-            border-left: 4px solid #3498db;
-            padding: 20px;
-            margin-bottom: 25px;
-            background: #f8f9fa;
-            border-radius: 0 8px 8px 0;
-        }
-        .rank {
-            display: inline-block;
-            background: #3498db;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 30px;
-            font-weight: bold;
-            margin-right: 15px;
-        }
-        .title {
-            font-size: 1.3em;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        .title a {
-            color: inherit;
-            text-decoration: none;
-        }
-        .title a:hover {
-            color: #3498db;
-        }
-        .meta {
-            color: #7f8c8d;
-            font-size: 0.9em;
-            margin-bottom: 15px;
-        }
-        .source {
-            color: #3498db;
-            font-weight: 500;
-        }
-        .summary {
-            margin-bottom: 15px;
-        }
-        .summary p {
-            margin: 8px 0;
-            color: #555;
-        }
-        .scores {
-            display: flex;
-            gap: 20px;
-            font-size: 0.9em;
-        }
-        .score {
-            background: #ecf0f1;
-            padding: 8px 12px;
-            border-radius: 6px;
-            color: #2c3e50;
-        }
-        .score-label {
-            font-weight: 500;
-            color: #7f8c8d;
-        }
-        .final-score {
-            background: #3498db;
-            color: white;
-            font-weight: 600;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI/ML Weekly Newsletter</title>
+
+  <style>
+    /* ---------- Design tokens ---------- */
+    :root{
+      --bg: #0a0d12; --panel:#0f1522; --border:#172235; --text:#eaf1fa; --muted:#9fb0c8; --link:#89ccff;
+      --accent-a:#6ae3ff; --accent-b:#6be7cb; --accent-c:#9a8cff;
+      --radius:18px; --gap:16px; --container:940px; --measure:70ch;
+      --shadow:0 12px 32px rgba(0,0,0,.45), 0 1px 0 rgba(255,255,255,.04) inset;
+      --fs-0:13px; --fs-1:16px; --fs-2:18px; --fs-3:22px; --fs-4:28px;
+    }
+    @media (prefers-color-scheme: light){
+      :root{ --bg:#f6f9fc; --panel:#ffffff; --border:#e8eef6; --text:#0e1726; --muted:#667892; --link:#0a66c2;
+             --shadow:0 12px 28px rgba(10,35,70,.12), 0 1px 0 rgba(0,0,0,.04) inset; }
+    }
+    [data-theme="light"]{ --bg:#f6f9fc; --panel:#ffffff; --border:#e8eef6; --text:#0e1726; --muted:#667892; --link:#0a66c2; }
+    [data-theme="dark"] { --bg:#0a0d12; --panel:#0f1522; --border:#172235; --text:#eaf1fa; --muted:#9fb0c8; --link:#89ccff; }
+
+    /* ---------- Base ---------- */
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg); color:var(--text);
+      font: var(--fs-1)/1.72 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Noto Sans", sans-serif;
+      overflow-x:hidden;
+    }
+    .container{ max-width:var(--container); margin:0 auto; padding:34px 18px 72px; position:relative; }
+    a{ color:var(--link); text-decoration:none } a:hover{text-decoration:underline}
+    .meta{ color:var(--muted); font-size:var(--fs-0) }
+
+    /* ---------- Background aurora + grid (pure CSS) ---------- */
+    .bg{
+      position:fixed; inset:-20vmax -20vmax -20vmax -20vmax; z-index:-1;
+      background:
+        radial-gradient(35vmax 35vmax at 15% 10%, rgba(106,227,255,.16), transparent 60%),
+        radial-gradient(40vmax 40vmax at 85% 20%, rgba(155,140,255,.14), transparent 65%),
+        radial-gradient(45vmax 45vmax at 60% 90%, rgba(107,231,203,.12), transparent 60%),
+        linear-gradient(180deg, transparent, rgba(255,255,255,.02));
+      pointer-events:none;
+    }
+    .grid::before{
+      content:""; position:fixed; inset:0; z-index:-1; opacity:.05;
+      background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px);
+      background-size: 24px 24px;
+      mix-blend-mode: soft-light;
+      pointer-events:none;
+    }
+
+    /* ---------- Header ---------- */
+    header{ margin-bottom:16px }
+    h1{
+      margin:0 0 6px; font-weight:900; font-size:clamp(24px,2.6vw,32px); letter-spacing:.2px;
+      background: linear-gradient(90deg, var(--accent-a), var(--accent-b), var(--accent-c));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+    }
+
+    /* ---------- Controls ---------- */
+    .controls{
+      display:flex; gap:12px; flex-wrap:wrap; align-items:center;
+      background:color-mix(in hsl, var(--panel) 88%, transparent);
+      border:1px solid var(--border); padding:12px; border-radius:14px; box-shadow:var(--shadow);
+      position:sticky; top:0; z-index:10; backdrop-filter:saturate(1.1) blur(8px)
+    }
+    .controls input[type="search"], .controls select{
+      background:transparent; color:var(--text);
+      border:1px solid var(--border); border-radius:12px; padding:9px 12px; outline:none; min-width:200px;
+    }
+    .spacer{ flex:1 1 auto }
+    .btn{
+      border:1px solid var(--border); background:linear-gradient(180deg, color-mix(in hsl, var(--panel) 92%, transparent), var(--panel));
+      color:var(--text); padding:9px 12px; border-radius:12px; cursor:pointer; transition:transform .12s ease, box-shadow .12s ease;
+    }
+    .btn:hover{ transform:translateY(-1px); box-shadow:0 6px 18px rgba(0,0,0,.15) }
+
+    /* ---------- Section Navigation ---------- */
+    .sections-nav{ margin:18px 0; padding:20px; background:color-mix(in hsl, var(--panel) 88%, transparent);
+      border:1px solid var(--border); border-radius:18px; box-shadow:var(--shadow); backdrop-filter:saturate(1.1) blur(8px) }
+    .sections-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px }
+    .section-link{ display:flex; flex-direction:column; gap:6px; padding:16px; border-radius:14px;
+      background:color-mix(in hsl, var(--panel) 92%, transparent); border:1px solid var(--border);
+      text-decoration:none; color:var(--text); transition:all .15s ease }
+    .section-link:hover{ transform:translateY(-1px); border-color:var(--accent-a); box-shadow:0 8px 20px rgba(0,0,0,.2) }
+    .section-index{ font-size:var(--fs-3); font-weight:900; color:var(--accent-a) }
+    .section-title{ font-size:var(--fs-2); font-weight:700; margin:0 }
+    .section-desc{ font-size:var(--fs-0); color:var(--muted); line-height:1.4 }
+
+    /* ---------- Section Groups ---------- */
+    .section-group{ margin:24px 0 }
+    .section-header{ margin-bottom:16px; padding:16px 20px; background:color-mix(in hsl, var(--panel) 85%, transparent);
+      border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow) }
+    .section-header .section-title{ display:flex; align-items:center; gap:12px; margin:0; font-size:var(--fs-3) }
+    .section-header .section-index{ width:40px; height:40px; display:inline-grid; place-items:center;
+      background:linear-gradient(135deg, var(--accent-a), var(--accent-b)); color:var(--bg);
+      border-radius:999px; font-weight:900; font-size:var(--fs-1) }
+    .section-description{ margin:8px 0 0; color:var(--muted); font-size:var(--fs-1) }
+
+    /* ---------- Cards ---------- */
+    .list{ display:flex; flex-direction:column; gap:var(--gap); margin-top:18px }
+    .card{
+      position:relative; border-radius:22px; padding:22px;
+      background:linear-gradient(180deg, color-mix(in hsl, var(--panel) 92%, transparent), var(--panel));
+      border:1px solid var(--border); box-shadow:var(--shadow); transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      overflow:hidden;
+    }
+    .card::after{ /* glowing gradient border on hover */
+      content:""; position:absolute; inset:-1px; border-radius:24px; pointer-events:none; opacity:0; transition:opacity .25s ease;
+      background:linear-gradient(120deg, rgba(106,227,255,.55), rgba(155,140,255,.45), rgba(107,231,203,.55));
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude; -webkit-mask-composite: xor;
+      padding:1px;
+    }
+    .card:hover{ transform:translateY(-2px); border-color:color-mix(in hsl, var(--border), var(--accent-a) 35%); box-shadow:0 16px 34px rgba(0,0,0,.38) }
+    .card:hover::after{ opacity:.9 }
+
+    /* ---------- Editor Reason ---------- */
+    .editor-reason{ margin:12px 0; padding:12px 16px; background:color-mix(in hsl, var(--accent-a) 8%, transparent);
+      border:1px solid color-mix(in hsl, var(--accent-a) 20%, transparent); border-radius:12px }
+    .editor-reason .eyebrow{ color:var(--accent-a); font-weight:600 }
+    .editor-reason p{ margin:8px 0 0; font-size:var(--fs-1); line-height:1.5 }
+
+    .topline{ display:flex; align-items:flex-start; gap:10px; flex-wrap:wrap }
+    .rank{ width:32px; height:32px; display:inline-grid; place-items:center; border-radius:999px;
+      background:linear-gradient(180deg, color-mix(in hsl, var(--panel) 75%, transparent), var(--panel));
+      border:1px solid var(--border); font-weight:800; font-size:var(--fs-0);
+      box-shadow:inset 0 0 0 2px color-mix(in hsl, var(--accent-a) 40%, transparent);
+    }
+    .title{ font-size:var(--fs-4); font-weight:900; margin:2px 0; line-height:1.25; max-width:var(--measure) }
+    .sub{ color:var(--muted); font-size:var(--fs-0); display:flex; gap:8px; flex-wrap:wrap; align-items:center }
+    .chip{ background:color-mix(in hsl, var(--panel) 70%, transparent); border:1px solid var(--border); padding:4px 9px; border-radius:999px }
+
+    .sum{ margin-top:12px; max-width:var(--measure); text-wrap:pretty; hyphens:auto }
+    .eyebrow{ display:block; color:var(--muted); font-size:var(--fs-0); letter-spacing:.08em; text-transform:uppercase; margin:10px 0 2px }
+    .sum p{ margin:10px 0 }
+
+    /* Score bars with soft motion */
+    .scores{ margin-top:12px; display:grid; gap:8px }
+    .bar{ display:grid; grid-template-columns:92px 1fr 50px; gap:10px; align-items:center; font-size:var(--fs-0); color:var(--muted) }
+    .track{ height:10px; border-radius:999px; background:color-mix(in hsl, var(--panel) 70%, transparent); border:1px solid var(--border); overflow:hidden }
+    .fill{
+      height:100%;
+      background:linear-gradient(90deg, var(--accent-a), var(--accent-b), var(--accent-c));
+      background-size:200% 100%; animation: flow 4s ease infinite;
+    }
+    @keyframes flow{ 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+
+    /* Skim mode */
+    body.skim .sum p{ display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden }
+    .expand{ margin-top:8px; font-size:var(--fs-0) }
+    .expand button{ background:transparent; border:1px solid var(--border); color:var(--text); padding:6px 10px; border-radius:10px; cursor:pointer }
+    .spacer{flex:1 1 auto}
+
+    @media (min-width: 980px){ .container{ padding:40px 24px 90px } .card{ padding:26px } }
+  </style>
 </head>
 <body>
-    <div class="container">
+  <!-- ambient layers -->
+  <div class="bg"></div>
+  <div class="grid"></div>
+
+  <div class="container">
+    <header>
+      <h1>AI/ML Weekly — Section Picks</h1>
+      <p class="meta">Top picks for leaders: Executive, Strategy, Launches, Security, Applied, Infra, Research.</p>
+    </header>
+
+    <div class="controls" role="region" aria-label="Controls">
+      <input id="q" type="search" placeholder="Search title & summary…" aria-label="Search articles" />
+      <select id="source" aria-label="Filter by source"><option value="">All sources</option></select>
+      <select id="sort" aria-label="Sort">
+        <option value="rank">Sort: Rank</option>
+        <option value="score">Sort: Score</option>
+        <option value="date">Sort: Date (new→old)</option>
+      </select>
+      <div class="spacer"></div>
+      <button id="skim"  class="btn" type="button" aria-pressed="false" title="Toggle skim mode">Skim</button>
+      <button id="theme" class="btn" type="button" aria-pressed="false" aria-label="Toggle theme">☾/☀︎</button>
+    </div>
+
+    
+  <!-- Section Navigation -->
+  
+  <nav class="sections-nav" aria-label="Newsletter sections">
+    <div class="sections-grid">
+      
+      <a href="#section-exec" class="section-link">
+        <span class="section-index">A</span>
+        <span class="section-title">Executive Briefing</span>
+        <span class="section-desc">Most consequential items (policy, launches, market shifts).</span>
+      </a>
+      
+      <a href="#section-strategy" class="section-link">
+        <span class="section-index">B</span>
+        <span class="section-title">Strategy & Market Analysis</span>
+        <span class="section-desc">Funding, competitive moves, adoption trends, business models.</span>
+      </a>
+      
+      <a href="#section-launches" class="section-link">
+        <span class="section-index">C</span>
+        <span class="section-title">Launches & Product Updates</span>
+        <span class="section-desc">Vendor releases, pricing, GA announcements, integrations.</span>
+      </a>
+      
+    </div>
+  </nav>
+  
+
+  <!-- Articles grouped by section -->
+  
+  
+    
+      
+      <section id="section-exec" class="section-group">
+        <header class="section-header">
+          <h2 class="section-title">
+            <span class="section-index">A</span>
+            Executive Briefing
+          </h2>
+          <p class="section-description">
+            
+              Most consequential items (policy, launches, market shifts).
+            
+              
+            
+              
+            
+          </p>
+        </header>
+    
+
+    <article class="card"
+      data-rank="1"
+      data-score="0.000"
+      data-source="MIT Technology Review (AI)"
+      data-date="2025-08-26T09:00:00+00:00"
+      data-section="exec"
+      data-haystack="open the pod bay doors, claude whats new: open the pod bay doors, claude. details not available (source text limited). why it matters: implications for enterprise adoption, security, and business impact.">
+
+      <div class="topline">
+        <span class="rank">#1</span>
+        <h3 class="title"><a href="https://www.technologyreview.com/2025/08/26/1122475/open-the-pod-bay-doors-claude/">Open the pod bay doors, Claude</a></h3>
+      </div>
+
+      <div class="sub">
+        <span>MIT Technology Review (AI)</span> •
+        <span>2025-08-26T09:00:00+00:00</span>
         
-<h1>AI Weekly Newsletter — Data-Driven Issue</h1>
-<p class="subheader">Top 10 stories ranked by Technical Innovation, Enterprise/Security Applicability, and Business Impact.</p>
-<p class="generated">Generated: 2025-08-29 14:49</p>
+      </div>
+
+      <!-- Editor Reason (if available) -->
+      
+
+      <div class="sum">
+        <span class="eyebrow">What's new</span>
+        <p>What's new: Open the pod bay doors, Claude. Details not available (source text limited).</p>
+        <span class="eyebrow">Why it matters</span>
+        <p>Why it matters: implications for enterprise adoption, security, and business impact.</p>
+        <div class="expand"><button type="button" data-expand>Expand</button></div>
+      </div>
+
+      
+
+    </article>
+
+    
+    </section>
+    
+  
+    
+      
+      <section id="section-strategy" class="section-group">
+        <header class="section-header">
+          <h2 class="section-title">
+            <span class="section-index">B</span>
+            Strategy & Market Analysis
+          </h2>
+          <p class="section-description">
+            
+              
+            
+              Funding, competitive moves, adoption trends, business models.
+            
+              
+            
+          </p>
+        </header>
+    
+
+    <article class="card"
+      data-rank="1"
+      data-score="0.000"
+      data-source="TechCrunch (AI)"
+      data-date="2025-08-30T21:40:49+00:00"
+      data-section="strategy"
+      data-haystack="nvidia says two mystery customers accounted for 39% of q2 revenue whats new: nvidia says two mystery customers accounted for 39% of q2 revenue. details not available (source text limited). why it matters: implications for enterprise adoption, security, and business impact.">
+
+      <div class="topline">
+        <span class="rank">#1</span>
+        <h3 class="title"><a href="https://techcrunch.com/2025/08/30/nvidia-says-two-mystery-customers-accounted-for-39-of-q2-revenue/">Nvidia says two mystery customers accounted for 39% of Q2 revenue</a></h3>
+      </div>
+
+      <div class="sub">
+        <span>TechCrunch (AI)</span> •
+        <span>2025-08-30T21:40:49+00:00</span>
+        
+      </div>
+
+      <!-- Editor Reason (if available) -->
+      
+
+      <div class="sum">
+        <span class="eyebrow">What's new</span>
+        <p>What's new: Nvidia says two mystery customers accounted for 39% of Q2 revenue. Details not available (source text limited).</p>
+        <span class="eyebrow">Why it matters</span>
+        <p>Why it matters: implications for enterprise adoption, security, and business impact.</p>
+        <div class="expand"><button type="button" data-expand>Expand</button></div>
+      </div>
+
+      
+
+    </article>
+
+    
+  
+    
+
+    <article class="card"
+      data-rank="2"
+      data-score="0.000"
+      data-source="VentureBeat (AI)"
+      data-date="2025-08-30T01:06:26+00:00"
+      data-section="strategy"
+      data-haystack="software commands 40% of cybersecurity budgets as gen ai attacks execute in milliseconds whats new: software commands 40% of cybersecurity budgets as gen ai attacks execute in milliseconds. details not available (source text limited). why it matters: implications for enterprise adoption, security, and business impact.">
+
+      <div class="topline">
+        <span class="rank">#2</span>
+        <h3 class="title"><a href="https://venturebeat.com/security/software-is-40-of-security-budgets-as-cisos-shift-to-ai-defense/">Software commands 40% of cybersecurity budgets as gen AI attacks execute in milliseconds</a></h3>
+      </div>
+
+      <div class="sub">
+        <span>VentureBeat (AI)</span> •
+        <span>2025-08-30T01:06:26+00:00</span>
+        
+      </div>
+
+      <!-- Editor Reason (if available) -->
+      
+
+      <div class="sum">
+        <span class="eyebrow">What's new</span>
+        <p>What's new: Software commands 40% of cybersecurity budgets as gen AI attacks execute in milliseconds. Details not available (source text limited).</p>
+        <span class="eyebrow">Why it matters</span>
+        <p>Why it matters: implications for enterprise adoption, security, and business impact.</p>
+        <div class="expand"><button type="button" data-expand>Expand</button></div>
+      </div>
+
+      
+
+    </article>
+
+    
+  
+    
+
+    <article class="card"
+      data-rank="3"
+      data-score="0.000"
+      data-source="VentureBeat (AI)"
+      data-date="2025-08-30T00:14:14+00:00"
+      data-section="strategy"
+      data-haystack="how sakana ai’s new evolutionary algorithm builds powerful ai models without expensive retraining whats new: how sakana ai’s new evolutionary algorithm builds powerful ai models without expensive retraining. details not available (source text limited). why it matters: implications for enterprise adoption, security, and business impact.">
+
+      <div class="topline">
+        <span class="rank">#3</span>
+        <h3 class="title"><a href="https://venturebeat.com/ai/how-sakana-ais-new-evolutionary-algorithm-builds-powerful-ai-models-without-expensive-retraining/">How Sakana AI’s new evolutionary algorithm builds powerful AI models without expensive retraining</a></h3>
+      </div>
+
+      <div class="sub">
+        <span>VentureBeat (AI)</span> •
+        <span>2025-08-30T00:14:14+00:00</span>
+        
+      </div>
+
+      <!-- Editor Reason (if available) -->
+      
+
+      <div class="sum">
+        <span class="eyebrow">What's new</span>
+        <p>What's new: How Sakana AI’s new evolutionary algorithm builds powerful AI models without expensive retraining. Details not available (source text limited).</p>
+        <span class="eyebrow">Why it matters</span>
+        <p>Why it matters: implications for enterprise adoption, security, and business impact.</p>
+        <div class="expand"><button type="button" data-expand>Expand</button></div>
+      </div>
+
+      
+
+    </article>
+
+    
+  
+    
+
+    <article class="card"
+      data-rank="4"
+      data-score="0.000"
+      data-source="TechCrunch (AI)"
+      data-date="2025-08-30T01:34:05+00:00"
+      data-section="strategy"
+      data-haystack="cracks are forming in meta’s partnership with scale ai whats new: cracks are forming in meta’s partnership with scale ai. details not available (source text limited). why it matters: implications for enterprise adoption, security, and business impact.">
+
+      <div class="topline">
+        <span class="rank">#4</span>
+        <h3 class="title"><a href="https://techcrunch.com/2025/08/29/cracks-are-forming-in-metas-partnership-with-scale-ai/">Cracks are forming in Meta’s partnership with Scale AI</a></h3>
+      </div>
+
+      <div class="sub">
+        <span>TechCrunch (AI)</span> •
+        <span>2025-08-30T01:34:05+00:00</span>
+        
+      </div>
+
+      <!-- Editor Reason (if available) -->
+      
+
+      <div class="sum">
+        <span class="eyebrow">What's new</span>
+        <p>What's new: Cracks are forming in Meta’s partnership with Scale AI. Details not available (source text limited).</p>
+        <span class="eyebrow">Why it matters</span>
+        <p>Why it matters: implications for enterprise adoption, security, and business impact.</p>
+        <div class="expand"><button type="button" data-expand>Expand</button></div>
+      </div>
+
+      
+
+    </article>
+
+    
+    </section>
+    
+  
+    
+      
+      <section id="section-launches" class="section-group">
+        <header class="section-header">
+          <h2 class="section-title">
+            <span class="section-index">C</span>
+            Launches & Product Updates
+          </h2>
+          <p class="section-description">
+            
+              
+            
+              
+            
+              Vendor releases, pricing, GA announcements, integrations.
+            
+          </p>
+        </header>
+    
+
+    <article class="card"
+      data-rank="1"
+      data-score="0.000"
+      data-source="AWS Machine Learning Blog"
+      data-date="2025-08-28T20:20:10+00:00"
+      data-section="launches"
+      data-haystack="empowering air quality research with secure, ml-driven predictive analytics whats new: empowering air quality research with secure, ml-driven predictive analytics. details not available (source text limited). why it matters: implications for enterprise adoption, security, and business impact.">
+
+      <div class="topline">
+        <span class="rank">#1</span>
+        <h3 class="title"><a href="https://aws.amazon.com/blogs/machine-learning/empowering-air-quality-research-with-secure-ml-driven-predictive-analytics/">Empowering air quality research with secure, ML-driven predictive analytics</a></h3>
+      </div>
+
+      <div class="sub">
+        <span>AWS Machine Learning Blog</span> •
+        <span>2025-08-28T20:20:10+00:00</span>
+        
+      </div>
+
+      <!-- Editor Reason (if available) -->
+      
+
+      <div class="sum">
+        <span class="eyebrow">What's new</span>
+        <p>What's new: Empowering air quality research with secure, ML-driven predictive analytics. Details not available (source text limited).</p>
+        <span class="eyebrow">Why it matters</span>
+        <p>Why it matters: implications for enterprise adoption, security, and business impact.</p>
+        <div class="expand"><button type="button" data-expand>Expand</button></div>
+      </div>
+
+      
+
+    </article>
+
+    
+  
+    
+
+    <article class="card"
+      data-rank="2"
+      data-score="0.000"
+      data-source="AWS Machine Learning Blog"
+      data-date="2025-08-28T20:14:22+00:00"
+      data-section="launches"
+      data-haystack="how amazon finance built an ai assistant using amazon bedrock and amazon kendra to support analysts for data discovery and business insights whats new: how amazon finance built an ai assistant using amazon bedrock and amazon kendra to support analysts for data discovery and business insights. details not available (source text limited). why it matters: implications for enterprise adoption, security, and business impact.">
+
+      <div class="topline">
+        <span class="rank">#2</span>
+        <h3 class="title"><a href="https://aws.amazon.com/blogs/machine-learning/how-amazon-finance-built-an-ai-assistant-using-amazon-bedrock-and-amazon-kendra-to-support-analysts-for-data-discovery-and-business-insights/">How Amazon Finance built an AI assistant using Amazon Bedrock and Amazon Kendra to support analysts for data discovery and business insights</a></h3>
+      </div>
+
+      <div class="sub">
+        <span>AWS Machine Learning Blog</span> •
+        <span>2025-08-28T20:14:22+00:00</span>
+        
+      </div>
+
+      <!-- Editor Reason (if available) -->
+      
+
+      <div class="sum">
+        <span class="eyebrow">What's new</span>
+        <p>What's new: How Amazon Finance built an AI assistant using Amazon Bedrock and Amazon Kendra to support analysts for data discovery and business insights. Details not available (source text limited).</p>
+        <span class="eyebrow">Why it matters</span>
+        <p>Why it matters: implications for enterprise adoption, security, and business impact.</p>
+        <div class="expand"><button type="button" data-expand>Expand</button></div>
+      </div>
+
+      
+
+    </article>
+
+    
+    </section>
+    
+  
 
 
-<div class="item">
-    <div class="rank">1</div>
-    <div class="title">
-        <a href="https://arxiv.org/abs/2508.20443" target="_blank">Towards Mitigating Excessive Forgetting in LLM Unlearning via Entanglement-Aware Unlearning with Proxy Constraint</a>
-    </div>
-    <div class="meta">
-        <span class="source">arXiv cs.LG</span> • 
-        2025-08-29
-    </div>
-    <div class="summary">
-        <p>Computer Science > Machine Learning
-[Submitted on 28 Aug 2025]
-Title:Towards Mitigating Excessive Forgetting in LLM Unlearning via Entanglement-Aware Unlearning with Proxy Constraint
-View PDF HTML (experimental)Abstract:Large language models (LLMs) are trained on massive datasets that may include private or copyrighted content. Due to growing privacy and ownership concerns, data owners may request the removal of their data from trained models.</p>
-        <p>Why it matters: enterprise/security & business relevance at-a-glance.</p>
-    </div>
-    <div class="scores">
-        <div class="score final-score">
-            <div class="score-label">Final Score</div>
-            <div>0.704</div>
-        </div>
-        <div class="score">
-            <div class="score-label">Technical</div>
-            <div>1.00</div>
-        </div>
-        <div class="score">
-            <div class="score-label">Applicability</div>
-            <div>0.25</div>
-        </div>
-        <div class="score">
-            <div class="score-label">Business</div>
-            <div>0.25</div>
-        </div>
-    </div>
-</div>
+    <footer class="meta" style="margin-top:26px;">
+      Generated 2025-08-31 14:57 • Ranked by Technical Innovation, Enterprise/Security Applicability, and Business Impact.
+    </footer>
+  </div>
 
-<div class="item">
-    <div class="rank">2</div>
-    <div class="title">
-        <a href="https://arxiv.org/abs/2508.20452" target="_blank">Evaluating Differentially Private Generation of Domain-Specific Text</a>
-    </div>
-    <div class="meta">
-        <span class="source">arXiv cs.LG</span> • 
-        2025-08-29
-    </div>
-    <div class="summary">
-        <p>Computer Science > Machine Learning
-[Submitted on 28 Aug 2025]
-Title:Evaluating Differentially Private Generation of Domain-Specific Text
-View PDF HTML (experimental)Abstract:Generative AI offers transformative potential for high-stakes domains such as healthcare and finance, yet privacy and regulatory barriers hinder the use of real-world data. To address this, differentially private synthetic data generation has emerged as a promising alternative.</p>
-        <p>Why it matters: enterprise/security & business relevance at-a-glance.</p>
-    </div>
-    <div class="scores">
-        <div class="score final-score">
-            <div class="score-label">Final Score</div>
-            <div>0.701</div>
-        </div>
-        <div class="score">
-            <div class="score-label">Technical</div>
-            <div>1.00</div>
-        </div>
-        <div class="score">
-            <div class="score-label">Applicability</div>
-            <div>0.25</div>
-        </div>
-        <div class="score">
-            <div class="score-label">Business</div>
-            <div>0.25</div>
-        </div>
-    </div>
-</div>
-
-<div class="item">
-    <div class="rank">3</div>
-    <div class="title">
-        <a href="https://arxiv.org/abs/2508.20559" target="_blank">Leveraging Generative Models for Real-Time Query-Driven Text Summarization in Large-Scale Web Search</a>
-    </div>
-    <div class="meta">
-        <span class="source">arXiv cs.CL</span> • 
-        2025-08-29
-    </div>
-    <div class="summary">
-        <p>Computer Science > Computation and Language
-[Submitted on 28 Aug 2025]
-Title:Leveraging Generative Models for Real-Time Query-Driven Text Summarization in Large-Scale Web Search
-View PDF HTML (experimental)Abstract:In the dynamic landscape of large-scale web search, Query-Driven Text Summarization (QDTS) aims to generate concise and informative summaries from textual documents based on a given query, which is essential for improving user engagement and facilitating rapid decision-making. Traditional extractive summarization models, based primarily on ranking candidate summary segments, have been the dominant approach in industrial applications.</p>
-        <p>Why it matters: enterprise/security & business relevance at-a-glance.</p>
-    </div>
-    <div class="scores">
-        <div class="score final-score">
-            <div class="score-label">Final Score</div>
-            <div>0.649</div>
-        </div>
-        <div class="score">
-            <div class="score-label">Technical</div>
-            <div>0.60</div>
-        </div>
-        <div class="score">
-            <div class="score-label">Applicability</div>
-            <div>0.75</div>
-        </div>
-        <div class="score">
-            <div class="score-label">Business</div>
-            <div>0.25</div>
-        </div>
-    </div>
-</div>
-
-<div class="item">
-    <div class="rank">4</div>
-    <div class="title">
-        <a href="https://openai.com/index/openai-anthropic-safety-evaluation" target="_blank">OpenAI and Anthropic share findings from a joint safety evaluation</a>
-    </div>
-    <div class="meta">
-        <span class="source">OpenAI Blog</span> • 
-        2025-08-27
-    </div>
-    <div class="summary">
-        <p></p>
-        <p>Why it matters: enterprise/security & business relevance at-a-glance.</p>
-    </div>
-    <div class="scores">
-        <div class="score final-score">
-            <div class="score-label">Final Score</div>
-            <div>0.213</div>
-        </div>
-        <div class="score">
-            <div class="score-label">Technical</div>
-            <div>0.20</div>
-        </div>
-        <div class="score">
-            <div class="score-label">Applicability</div>
-            <div>0.00</div>
-        </div>
-        <div class="score">
-            <div class="score-label">Business</div>
-            <div>0.00</div>
-        </div>
-    </div>
-</div>
-
-<div class="item">
-    <div class="rank">5</div>
-    <div class="title">
-        <a href="https://openai.com/index/introducing-gpt-realtime" target="_blank">Introducing gpt-realtime and Realtime API updates</a>
-    </div>
-    <div class="meta">
-        <span class="source">OpenAI Blog</span> • 
-        2025-08-28
-    </div>
-    <div class="summary">
-        <p></p>
-        <p>Why it matters: enterprise/security & business relevance at-a-glance.</p>
-    </div>
-    <div class="scores">
-        <div class="score final-score">
-            <div class="score-label">Final Score</div>
-            <div>0.171</div>
-        </div>
-        <div class="score">
-            <div class="score-label">Technical</div>
-            <div>0.00</div>
-        </div>
-        <div class="score">
-            <div class="score-label">Applicability</div>
-            <div>0.00</div>
-        </div>
-        <div class="score">
-            <div class="score-label">Business</div>
-            <div>0.00</div>
-        </div>
-    </div>
-</div>
-
-<div class="item">
-    <div class="rank">6</div>
-    <div class="title">
-        <a href="https://openai.com/index/supporting-nonprofit-and-community-innovation" target="_blank">Supporting nonprofit and community innovation</a>
-    </div>
-    <div class="meta">
-        <span class="source">OpenAI Blog</span> • 
-        2025-08-28
-    </div>
-    <div class="summary">
-        <p></p>
-        <p>Why it matters: enterprise/security & business relevance at-a-glance.</p>
-    </div>
-    <div class="scores">
-        <div class="score final-score">
-            <div class="score-label">Final Score</div>
-            <div>0.171</div>
-        </div>
-        <div class="score">
-            <div class="score-label">Technical</div>
-            <div>0.00</div>
-        </div>
-        <div class="score">
-            <div class="score-label">Applicability</div>
-            <div>0.00</div>
-        </div>
-        <div class="score">
-            <div class="score-label">Business</div>
-            <div>0.00</div>
-        </div>
-    </div>
-</div>
-
-
-    </div>
+  <script>
+    // Theme toggle
+    (function(){
+      const root=document.documentElement,btn=document.getElementById('theme');
+      const saved=localStorage.getItem('theme'); if(saved) root.setAttribute('data-theme',saved);
+      btn.setAttribute('aria-pressed',(saved||'auto')==='dark');
+      btn.addEventListener('click',()=>{ const curr=root.getAttribute('data-theme')||'auto';
+        const next=(curr==='dark')?'light':'dark'; root.setAttribute('data-theme',next);
+        btn.setAttribute('aria-pressed', next==='dark'); localStorage.setItem('theme',next);});
+    })();
+    // Skim mode
+    (function(){
+      const b=document.body,btn=document.getElementById('skim'); const saved=localStorage.getItem('skim')==='1';
+      if(saved){ b.classList.add('skim'); btn.setAttribute('aria-pressed','true'); }
+      btn.addEventListener('click',()=>{ b.classList.toggle('skim'); const on=b.classList.contains('skim');
+        btn.setAttribute('aria-pressed',on); localStorage.setItem('skim', on?'1':'0');});
+    })();
+    // Search / filter / sort
+    (function(){
+      const $q=document.getElementById('q'),$src=document.getElementById('source'),$sort=document.getElementById('sort');
+      const list=document.querySelector('.list'); const cards=Array.from(document.querySelectorAll('.card'));
+      const sources=[...new Set(cards.map(c=>c.dataset.source))].sort();
+      sources.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;$src.appendChild(o);});
+      function apply(){
+        const q=($q.value||'').toLowerCase().trim(), src=$src.value, sort=$sort.value;
+        cards.forEach(c=>{ const hay=c.dataset.haystack; const okq=!q||hay.includes(q); const oks=!src||c.dataset.source===src; c.style.display=(okq&&oks)?'':''; });
+        const vis=cards.filter(c=>c.style.display!=='none');
+        vis.sort((a,b)=> sort==='score'? (parseFloat(b.dataset.score)-parseFloat(a.dataset.score))
+              : sort==='date'? (b.dataset.date||'').localeCompare(a.dataset.date||'')
+              : (parseInt(a.dataset.rank,10)-parseInt(b.dataset.rank,10)));
+        vis.forEach(el=>list.appendChild(el));
+      }
+      [$q,$src,$sort].forEach(el=>el.addEventListener('input',apply)); apply();
+    })();
+    // Per-card expand
+    document.addEventListener('click',e=>{
+      const btn=e.target.closest('[data-expand]'); if(!btn) return;
+      const card=btn.closest('.card'); card.classList.toggle('open');
+      btn.textContent = card.classList.contains('open') ? 'Collapse' : 'Expand';
+      card.querySelectorAll('.sum p').forEach(p=>p.style.webkitLineClamp = card.classList.contains('open') ? 'unset' : '4');
+    });
+  </script>
 </body>
 </html>

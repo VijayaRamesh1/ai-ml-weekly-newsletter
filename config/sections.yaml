@@ -1,0 +1,66 @@
+sections:
+  - id: exec       # A
+    index: A
+    title: Executive Briefing
+    description: Most consequential items (policy, launches, market shifts).
+    match:
+      sources: ["MIT Technology Review (AI)","Harvard Business Review (AI)","McKinsey (All)","Gartner Blog (All)"]
+      domains: []
+      keywords: ["policy","regulation","roadmap","strategy","leadership","CIO","CISO","budget","investment","risk"]
+
+  - id: strategy   # B
+    index: B
+    title: Strategy & Market Analysis
+    description: Funding, competitive moves, adoption trends, business models.
+    match:
+      sources: ["VentureBeat (AI)","TechCrunch (AI)","MIT Technology Review (AI)","Harvard Business Review (AI)","McKinsey (All)","Gartner Blog (All)"]
+      domains: ["technologyreview.com","hbr.org","venturebeat.com","techcrunch.com","mckinsey.com","gartner.com"]
+      keywords: ["market","funding","valuation","adoption","TCO","ROI","partnership","M&A","ecosystem"]
+
+  - id: launches   # C
+    index: C
+    title: Launches & Product Updates
+    description: Vendor releases, pricing, GA announcements, integrations.
+    match:
+      sources: ["OpenAI News","Google AI Blog","NVIDIA Blog","AWS Machine Learning Blog"]
+      domains: ["openai.com","ai.googleblog.com","blogs.nvidia.com","aws.amazon.com"]
+      keywords: ["launch","shipping","GA","general availability","pricing","preview","integration","SDK","release"]
+
+  - id: security   # D
+    index: D
+    title: Security, Safety & Governance
+    description: Risks, mitigations, evals, incidents, compliance.
+    match:
+      sources: []
+      domains: []
+      keywords: ["security","safety","governance","audit","prompt injection","exfiltration","jailbreak","abuse","PII","policy"]
+
+  - id: applied    # E
+    index: E
+    title: Applied Engineering & Case Studies
+    description: Practical builds, RAG patterns, reference templates.
+    match:
+      sources: ["AWS Machine Learning Blog","Google AI Blog","Community","Dev Infra"]
+      domains: ["medium.com","dev.to","github.com"]
+      keywords: ["RAG","case study","playbook","reference","implementation","how we built","template"]
+
+  - id: infra      # F
+    index: F
+    title: Infrastructure & Performance
+    description: Serving, inference, KV, quantization, throughput/latency.
+    match:
+      sources: ["NVIDIA Blog","SysML Notes"]
+      domains: ["blogs.nvidia.com","pytorch.org","tensorflow.org","developer.nvidia.com"]
+      keywords: ["throughput","latency","KV cache","Triton","CUDA","vLLM","quantization","LoRA","TensorRT","A100","H100"]
+
+  - id: research   # G
+    index: G
+    title: Foundational Research & Emerging Trends
+    description: arXiv results framed for business leaders.
+    match:
+      sources: ["arXiv cs.LG","arXiv cs.AI","arXiv cs.CL","arXiv stat.ML"]
+      domains: ["arxiv.org"]
+      keywords: ["benchmark","dataset","preprint","SOTA","theory","scaling law","transformer","federated","responsible AI"]
+
+order: [exec, strategy, launches, security, applied, infra, research]
+

@@ -26,18 +26,36 @@ def main():
     with OUT.open("w", encoding="utf-8") as f:
         for src in cfg.get("sources", []):
             feed = feedparser.parse(src["url"])
-            for e in feed.entries[:50]:
+            include_kw = [k.lower() for k in src.get("include_keywords", [])]
+            exclude_kw = [k.lower() for k in src.get("exclude_keywords", [])]
+            cap = int(src.get("max_items", 80))
+            seen = 0
+            
+            for e in feed.entries:
+                if seen >= cap: break
                 ts = e.get("published_parsed") or e.get("updated_parsed")
-                if not recent(ts, 7):  # widen to 14 if empty
+                if not recent(ts, 7):  # widen to 14 if needed
                     continue
-                url = e.get("link"); title = (e.get("title") or "").strip()
+                    
+                title = (e.get("title") or "").strip()
+                summary = (e.get("summary") or e.get("description") or "").lower()
+                hay = (title + " " + summary).lower()
+                
+                if include_kw and not any(k in hay for k in include_kw):  # keep only AI posts in broad feeds
+                    continue
+                if exclude_kw and any(k in hay for k in exclude_kw):
+                    continue
+                    
+                url = e.get("link") or ""
                 if not url: continue
+
                 text = fetch_text(url)
                 f.write(json.dumps({
                     "title": title, "url": url, "source": src["name"],
                     "published": to_iso(ts), "text": text[:20000]
                 }, ensure_ascii=False) + "\n")
-                count += 1
+                seen += 1; count += 1
+                
     print(f"Wrote {OUT} with {count} items")
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ import google.generativeai as genai
 
 # --- Config ---
 MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
-TOP10_FILE = Path("data/top10.json")
+TOP_FILE = Path(os.getenv("TOP_FILE", "data/selected.json"))  # Changed from top10.json
 CANDIDATES = Path("data/candidates.jsonl")
 CACHE_FILE = Path("data/summary_cache.json")
 SUMMARY_TARGET_TOKENS = int(os.getenv("SUMMARY_TARGET_TOKENS", "520"))  # ~500+ tokens
@@ -186,11 +186,11 @@ def summarize_article(title: str, url: str, raw_text: str, cache: dict) -> dict:
     return data
 
 def main():
-    if not TOP10_FILE.exists():
-        print("No top10.json found. Run the ranker first.")
+    if not TOP_FILE.exists():
+        print("No selected.json found. Run the selector first.")
         return
 
-    articles = json.loads(TOP10_FILE.read_text(encoding="utf-8"))
+    articles = json.loads(TOP_FILE.read_text(encoding="utf-8"))
     cache = load_cache()
     print(f"Processing {len(articles)} articles with Gemini {MODEL}…")
 
@@ -202,7 +202,7 @@ def main():
         art["summary_p1"] = summary["summary_p1"]
         art["summary_p2"] = summary["summary_p2"]
 
-    TOP10_FILE.write_text(json.dumps(articles, ensure_ascii=False, indent=2), encoding="utf-8")
+    TOP_FILE.write_text(json.dumps(articles, ensure_ascii=False, indent=2), encoding="utf-8")
     save_cache(cache)
     print(f"✅ Summarized {len(articles)} articles (target ≥ {SUMMARY_TARGET_TOKENS} tokens each)")
 

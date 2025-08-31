@@ -1,8 +1,26 @@
 sources:
-  - { name: "arXiv cs.LG", type: rss, url: "https://export.arxiv.org/rss/cs.LG" }
-  - { name: "arXiv cs.CL", type: rss, url: "https://export.arxiv.org/rss/cs.CL" }
-  - { name: "OpenAI Blog", type: rss, url: "https://openai.com/blog/rss.xml" }
-  - { name: "Google AI Blog", type: rss, url: "https://ai.googleblog.com/feeds/posts/default" }
-  - { name: "Anthropic", type: rss, url: "https://www.anthropic.com/news.xml" }
-  - { name: "Hugging Face", type: rss, url: "https://huggingface.co/blog/rss.xml" }
-  - { name: "Meta AI", type: rss, url: "https://ai.facebook.com/blog/rss/" }
+  # Research (arXiv)
+  - { name: "arXiv cs.LG",  type: rss, url: "https://export.arxiv.org/rss/cs.LG" }
+  - { name: "arXiv cs.AI",  type: rss, url: "https://export.arxiv.org/rss/cs.AI" }
+  - { name: "arXiv cs.CL",  type: rss, url: "https://export.arxiv.org/rss/cs.CL" }
+  - { name: "arXiv stat.ML",type: rss, url: "https://export.arxiv.org/rss/stat.ML" }
+
+  # Strategic & Business Impact
+  - { name: "MIT Technology Review (AI)", type: rss, url: "https://www.technologyreview.com/topic/artificial-intelligence/feed/" }
+  - { name: "Harvard Business Review (AI)", type: rss, url: "https://hbr.org/rss/topic/artificial-intelligence" }
+  - { name: "VentureBeat (AI)", type: rss, url: "https://venturebeat.com/category/ai/feed/" }
+  - name: McKinsey (All)
+    type: rss
+    url: https://www.mckinsey.com/rss
+    include_keywords: ["ai","artificial intelligence","machine learning","ml","gen ai","generative ai"]
+  - { name: "TechCrunch (AI)", type: rss, url: "https://techcrunch.com/category/artificial-intelligence/feed/" }
+  - name: Gartner Blog (All)
+    type: rss
+    url: https://www.gartner.com/en/blog/feed
+    include_keywords: ["ai","artificial intelligence","machine learning","ml","gen ai","generative ai"]
+
+  # Platforms & Enterprise Ops
+  - { name: "AWS Machine Learning Blog", type: rss, url: "https://aws.amazon.com/blogs/machine-learning/feed/" }
+  - { name: "Google AI Blog",            type: rss, url: "https://ai.googleblog.com/feeds/posts/default" }
+  - { name: "NVIDIA Blog",               type: rss, url: "https://blogs.nvidia.com/feed/" }
+  - { name: "OpenAI News",               type: rss, url: "https://openai.com/news/rss.xml" }

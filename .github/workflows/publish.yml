@@ -31,18 +31,18 @@ jobs:
           pip install -r requirements.txt
           python -c "import jinja2, yaml, feedparser, trafilatura, dateutil, rapidfuzz, httpx, fastembed, numpy, google.generativeai; print('OK: all imports present')"
 
-      - name: Build static issue (collect → rank → summarize → render)
+      - name: Build issue (collect → select → summarize → render)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: gemini-2.0-flash
+          TOP_PER_SECTION: "5"
+          TOP_FILE: data/selected.json
+          DATA_FILE: data/selected.json
         run: |
           set -euxo pipefail
           python app/collector/rss_collect.py
-          wc -l data/candidates.jsonl || true
-          python app/scorer/semantic_rank.py
-          cat data/top10.json || true
+          python app/editorial/select_topN_per_section.py
           python app/summarizer/gemini_summary.py
-          cat data/top10.json || true
           python app/build_issue.py
           ls -la site/dist
 
