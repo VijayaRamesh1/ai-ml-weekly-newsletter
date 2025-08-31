@@ -10,13 +10,30 @@ OUT_DIR = Path("site/dist")
 SECS = yaml.safe_load(Path("config/sections.yaml").read_text(encoding="utf-8"))
 
 def main():
-    items = json.loads(DATA_PATH.read_text(encoding="utf-8"))
-    order_index = {sid:i for i,sid in enumerate(SECS["order"])}
-    items.sort(key=lambda x: (order_index.get(x["section_id"], 999), x.get("rank", 999)))
+    data_items = json.loads(DATA_PATH.read_text(encoding="utf-8"))
 
-    # Build the nav (A–G) only for sections present
-    present = {i["section_id"] for i in items}
-    sections_nav = [s for s in SECS["sections"] if s["id"] in present]
+    order = SECS["order"]
+    meta  = {s["id"]: s for s in SECS["sections"]}
+
+    # group items by section (keeps your section order)
+    groups = []
+    for sid in order:
+        sec_items = [it for it in data_items if it.get("section_id")==sid]
+        if not sec_items:
+            continue
+        # ensure stable rank inside section
+        sec_items.sort(key=lambda x: x.get("rank", 999))
+        for r, it in enumerate(sec_items, 1):
+            it["rank"] = r
+
+        m = meta[sid]
+        groups.append({
+            "id": sid, "index": m["index"],
+            "title": m["title"], "desc": m["description"],
+            "items_list": sec_items  # renamed to avoid conflict
+        })
+
+    sections_nav = [{"id":g["id"],"index":g["index"],"title":g["title"],"desc":g["desc"]} for g in groups]
 
     env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
     tmpl = env.get_template("issue.html")
@@ -25,8 +42,8 @@ def main():
         header="Jaṭāyū Index",
         subheader="A weekly executive brief on AI — strategy, launches, security, applied engineering, infra, and research.",
         generated_at=datetime.now().strftime("%Y-%m-%d %H:%M"),
-        items=items,
-        sections_nav=[{"id":s["id"],"index":s["index"],"title":s["title"],"desc":s["description"]} for s in sections_nav],
+        groups=groups,              # <— pass grouped data
+        sections_nav=sections_nav   # <— only sections that have items
     )
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)

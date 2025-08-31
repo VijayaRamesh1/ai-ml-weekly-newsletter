@@ -1,29 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
-  <section class="list" aria-live="polite">
-    {% set current = None %}
-    {% for item in items %}
-      {% if current != item.section_id %}
-        {% set current = item.section_id %}
-        <!-- prominent category anchor -->
-        <h3 id="{{ item.section_id }}" class="section-title">{{ item.section_title }}</h3>
-      {% endif %}
 
-      <article class="card"
-        data-section="{{ item.section_id }}"
-        data-rank="{{ item.rank }}"
-        data-score="{{ "%.3f"|format(item.final_score if item.final_score is defined else 0) }}"
-        data-source="{{ item.source }}"
-        data-date="{{ item.published }}"
-        data-haystack="{{ (item.title ~ ' ' ~ item.summary_p1 ~ ' ' ~ item.summary_p2)|lower|replace('"','')|replace("'",'') }}"
-      >
-        <div class="meta">#{{ item.rank }} • {{ item.source }} • {{ item.published }}</div>
-        <h2 class="title"><a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">{{ item.title }}</a></h2>
-        <div class="sum">
-          <p>{{ item.summary_p1 }}</p>
-          <p>{{ item.summary_p2 }}</p>
+  <!-- Section nav pills already come from base via sections_nav -->
+
+  {% for sec in groups %}
+    <section class="sec-block" data-anchor="{{ sec.id }}">
+      <h3 id="{{ sec.id }}" class="section-title">{{ sec.title }}</h3>
+              <div class="list">
+          {% for item in sec.items_list %}
+            <article class="card"
+              data-section="{{ sec.id }}"
+              data-rank="{{ item.rank }}"
+              data-score="{{ "%.3f"|format(item.final_score if item.final_score is defined else 0) }}"
+              data-source="{{ item.source }}"
+              data-date="{{ item.published }}"
+              data-haystack="{{ (item.title ~ ' ' ~ item.summary_p1 ~ ' ' ~ item.summary_p2)|lower|replace('"','')|replace("'",'') }}"
+            >
+              <div class="meta">#{{ item.rank }} • {{ item.source }} • {{ item.published }}</div>
+              <h2 class="title"><a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">{{ item.title }}</a></h2>
+              <div class="sum">
+                <p>{{ item.summary_p1 }}</p>
+                <p>{{ item.summary_p2 }}</p>
+              </div>
+            </article>
+          {% endfor %}
         </div>
-      </article>
-    {% endfor %}
-  </section>
+    </section>
+  {% endfor %}
+
 {% endblock %}
