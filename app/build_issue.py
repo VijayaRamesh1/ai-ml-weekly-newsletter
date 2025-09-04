@@ -38,8 +38,8 @@ def main():
     env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
     tmpl = env.get_template("issue.html")
     html = tmpl.render(
-        title="Jaṭāyū Index — The Executive AI Brief",
-        header="Jaṭāyū Index",
+        title="AI Herald — The Executive AI Brief",
+        header="AI Herald",
         subheader="A weekly executive brief on AI — strategy, launches, security, applied engineering, infra, and research.",
         generated_at=datetime.now().strftime("%Y-%m-%d %H:%M"),
         groups=groups,              # <— pass grouped data

@@ -1,7 +1,7 @@
 sections:
   - id: exec       # A
     index: A
-    title: Jaṭāyū Briefing
+    title: AI Herald Briefing
     description: The 2–3 most consequential items this week.
     match:
       sources: ["MIT Technology Review (AI)","Harvard Business Review (AI)","McKinsey (All)","Gartner Blog (All)"]
