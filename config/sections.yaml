@@ -1,7 +1,7 @@
 sections:
   - id: exec       # A
     index: A
-    title: AI Herald Briefing
+    title: The AI/ML Brief
     description: The 2–3 most consequential items this week.
     match:
       sources: ["MIT Technology Review (AI)","Harvard Business Review (AI)","McKinsey (All)","Gartner Blog (All)"]
