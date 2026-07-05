@@ -23,11 +23,11 @@ Sections are organized around the operating reality of modern data and AI system
 ## How It Works
 
 1. Add original pieces to `data/originals.json`.
-2. Collect curated candidates from RSS and arXiv sources in `config/sources.yaml`.
-3. Select the top items per section using `app/editorial/select_topN_per_section.py`.
-4. Summarize selected items with Gemini using `app/summarizer/gemini_summary.py`.
-5. Render the issue to `site/dist/index.html` with `app/build_issue.py`.
-6. Publish the generated site through GitHub Pages via `.github/workflows/publish.yml`.
+2. Maintain curated links in `data/selected.json`, or regenerate them later from RSS/arXiv sources.
+3. Render the issue to `site/dist/index.html` with `app/build_issue.py`.
+4. Publish the generated site through GitHub Pages via `.github/workflows/publish.yml`.
+
+The GitHub Actions workflow is currently in static render mode. Gemini-dependent collection, selection, and summarization are dormant until you re-enable them.
 
 ## Local Development
 
@@ -41,7 +41,7 @@ python app/summarizer/gemini_summary.py
 python app/build_issue.py
 ```
 
-For UI-only work, you can render from the committed sample data without calling external APIs:
+For current static publishing, render from committed content without external AI calls:
 
 ```bash
 python app/build_issue.py
@@ -67,6 +67,6 @@ Add hand-written pieces to `data/originals.json`:
 
 Original items are rendered ahead of curated links in their section.
 
-## Configuration
+## Optional AI Generation
 
-Copy `env.example` to `.env` locally and set `GEMINI_API_KEY` before running the selector or summarizer. In GitHub Actions, set `GEMINI_API_KEY` as a repository secret.
+Gemini is not required for the current publish flow. If you later want automated selection and summarization again, copy `env.example` to `.env` locally, set `GEMINI_API_KEY`, and restore the dormant commands in `.github/workflows/publish.yml`.

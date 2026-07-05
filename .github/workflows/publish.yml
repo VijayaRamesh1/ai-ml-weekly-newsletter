@@ -33,19 +33,17 @@ jobs:
           pip install -r requirements.txt
           python -c "import jinja2, yaml, feedparser, trafilatura, dateutil, rapidfuzz, httpx, fastembed, numpy, google.generativeai; print('OK: all imports present')"
 
-      - name: Build issue (collect → select → summarize → render)
+      - name: Build issue (static render; AI generation dormant)
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: gemini-2.0-flash
-          TOP_PER_SECTION: "5"
-          TOP_FILE: data/selected.json
           DATA_FILE: data/selected.json
         run: |
           set -euxo pipefail
-          python app/collector/rss_collect.py           # existing sources (MIT TR, HBR, etc.)
-          python app/collector/arxiv_api_collect.py     # NEW: reliable arXiv weekly
-          python app/editorial/select_topN_per_section.py
-          python app/summarizer/gemini_summary.py
+          # Gemini-dependent collection/selection/summarization is intentionally dormant.
+          # To re-enable later, add GEMINI_API_KEY and restore:
+          # python app/collector/rss_collect.py
+          # python app/collector/arxiv_api_collect.py
+          # python app/editorial/select_topN_per_section.py
+          # python app/summarizer/gemini_summary.py
           python app/build_issue.py
           ls -la site/dist
 
