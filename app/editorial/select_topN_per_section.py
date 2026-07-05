@@ -66,10 +66,12 @@ def load_candidates():
         items.append(it)
     return items
 
-SYS = ("You are an editor for senior IT leaders. From the list, PICK EXACTLY N items "
-       "that maximize enterprise relevance, novelty, and decision value. Prefer freshness, "
-       "source diversity, and clear implications. Output ONLY JSON with keys 'picks' (array of indices) "
-       "and 'reasons' (map index->short reason). No other text.")
+SYS = ("You are an editor for data platform, ML platform, AIOps, and SRE leaders. "
+       "From the list, PICK EXACTLY N items that maximize operational value for teams "
+       "building reliable data pipelines, AI operations workflows, and ML-based anomaly detection. "
+       "Prefer concrete architecture, incident lessons, evaluation methods, implementation tradeoffs, "
+       "source diversity, and fresh research that can become production practice. Output ONLY JSON "
+       "with keys 'picks' (array of indices) and 'reasons' (map index->short reason). No other text.")
 
 def build_prompt(section_title, shortlist, n):
     lines=[]
@@ -155,4 +157,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

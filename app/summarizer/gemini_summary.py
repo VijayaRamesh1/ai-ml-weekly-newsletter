@@ -74,7 +74,7 @@ def load_full_text_if_missing(title: str, url: str, text: str) -> str:
     return ""
 
 SYS_PROMPT = (
-    "You are an expert AI/ML analyst writing long-form summaries for enterprise readers. "
+    "You are an expert data platform and ML operations analyst writing long-form summaries for practitioners. "
     "Return ONLY valid JSON with keys summary_p1 and summary_p2 (no other keys, no preface). "
     "Both values must be plain text paragraphs (no bullets). "
     "Write with high factual discipline—if metrics/datasets/limits aren't stated, say 'not stated'. "
@@ -91,7 +91,7 @@ Article (truncated to provide context):
 
 Write TWO paragraphs in JSON (keys: summary_p1, summary_p2) with a COMBINED length ≥ {min_tokens} tokens.
 - summary_p1 (WHAT + HOW):  cover novelty, method/architecture, data/training, evals/metrics, limitations.
-- summary_p2 (WHY IT MATTERS): map to enterprise use-cases, security/GRC implications, ops/perf, cost, ROI, adoption risks.
+- summary_p2 (WHY IT MATTERS): map to data pipeline reliability, AIOps, observability, anomaly detection, ops/perf, cost, governance, and adoption risks.
 - Use concrete details and numbers when available; do not invent facts. No citations or quotes.
 Return ONLY JSON.
 """.strip()
@@ -178,7 +178,7 @@ def summarize_article(title: str, url: str, raw_text: str, cache: dict) -> dict:
     if not data.get("summary_p1") or not data.get("summary_p2"):
         data = {
             "summary_p1": f"What's new: {title}. Details not available (source text limited).",
-            "summary_p2": "Why it matters: implications for enterprise adoption, security, and business impact."
+            "summary_p2": "Why it matters: implications for data reliability, AI operations, anomaly detection, and production engineering."
         }
 
     cache[key] = data

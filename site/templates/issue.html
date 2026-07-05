@@ -1,31 +1,188 @@
 {% extends "base.html" %}
 {% block content %}
-
-  <!-- Section nav pills already come from base via sections_nav -->
+  <style>
+    .section-head{
+      display:grid;
+      grid-template-columns:auto minmax(0,1fr);
+      gap:14px;
+      align-items:start;
+      margin:36px 0 14px;
+      padding-top:14px;
+      border-top:1px solid var(--line);
+    }
+    .section-index{
+      width:38px;
+      height:38px;
+      display:grid;
+      place-items:center;
+      border-radius:8px;
+      border:1px solid var(--ink);
+      color:var(--ink);
+      font:700 13px/1 "IBM Plex Mono", monospace;
+    }
+    .section-title{
+      margin:0;
+      scroll-margin-top:150px;
+      font-size:26px;
+      line-height:1.1;
+      letter-spacing:0;
+    }
+    .section-desc{
+      margin:6px 0 0;
+      max-width:760px;
+      color:var(--muted);
+    }
+    .list{
+      display:grid;
+      gap:12px;
+    }
+    .card{
+      position:relative;
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:20px;
+      padding:18px;
+      border:1px solid var(--line);
+      border-radius:8px;
+      background:var(--panel);
+      box-shadow:0 1px 0 rgba(0,0,0,.03);
+    }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:0 auto 0 0;
+      width:4px;
+      border-radius:8px 0 0 8px;
+      background:var(--accent);
+      opacity:.9;
+    }
+    .card.original::before{background:var(--accent-2)}
+    .meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:7px;
+      align-items:center;
+      margin-bottom:10px;
+      color:var(--muted);
+      font:700 12px/1.2 "IBM Plex Mono", monospace;
+      text-transform:uppercase;
+      letter-spacing:.03em;
+    }
+    .pill{
+      display:inline-flex;
+      min-height:23px;
+      align-items:center;
+      padding:0 7px;
+      border-radius:6px;
+      background:var(--soft);
+      color:var(--ink);
+    }
+    .pill.original{
+      background:color-mix(in srgb, var(--accent-2) 15%, var(--panel));
+      color:var(--accent-2);
+    }
+    .title{
+      margin:0;
+      max-width:880px;
+      font-size:22px;
+      line-height:1.22;
+      letter-spacing:0;
+    }
+    .title a{
+      text-decoration:none;
+      color:var(--ink);
+    }
+    .title a:hover{text-decoration:underline; text-decoration-thickness:2px}
+    .sum{
+      max-width:78ch;
+      color:color-mix(in srgb, var(--ink) 78%, var(--muted));
+    }
+    .sum p{margin:11px 0 0}
+    .card-aside{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:10px;
+      min-width:112px;
+    }
+    .score{
+      color:var(--muted);
+      font:700 12px/1 "IBM Plex Mono", monospace;
+    }
+    .read-link{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:36px;
+      padding:0 11px;
+      border:1px solid var(--line);
+      border-radius:8px;
+      color:var(--ink);
+      background:var(--panel-2);
+      text-decoration:none;
+      font-weight:800;
+      white-space:nowrap;
+    }
+    .read-link:hover{border-color:var(--ink)}
+    @media (max-width:760px){
+      .section-head{grid-template-columns:1fr}
+      .card{grid-template-columns:1fr}
+      .card-aside{align-items:flex-start; min-width:0}
+    }
+  </style>
 
   {% for sec in groups %}
     <section class="sec-block" data-anchor="{{ sec.id }}">
-      <h3 id="{{ sec.id }}" class="section-title">{{ sec.title }}</h3>
-              <div class="list">
-          {% for item in sec.items_list %}
-            <article class="card"
-              data-section="{{ sec.id }}"
-              data-rank="{{ item.rank }}"
-              data-score="{{ "%.3f"|format(item.final_score if item.final_score is defined else 0) }}"
-              data-source="{{ item.source }}"
-              data-date="{{ item.published }}"
-              data-haystack="{{ (item.title ~ ' ' ~ item.summary_p1 ~ ' ' ~ item.summary_p2)|lower|replace('"','')|replace("'",'') }}"
-            >
-              <div class="meta">#{{ item.rank }} • {{ item.source }} • {{ item.published }}</div>
-              <h2 class="title"><a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">{{ item.title }}</a></h2>
+      <div class="section-head">
+        <div class="section-index">{{ sec.index }}</div>
+        <div>
+          <h2 id="{{ sec.id }}" class="section-title">{{ sec.title }}</h2>
+          <p class="section-desc">{{ sec.desc }}</p>
+        </div>
+      </div>
+
+      <div class="list">
+        {% for item in sec.items_list %}
+          {% set is_original = item.item_type|default('curated') == 'original' %}
+          <article class="card {% if is_original %}original{% endif %}"
+            data-section="{{ sec.id }}"
+            data-section-title="{{ sec.title }}"
+            data-rank="{{ item.rank }}"
+            data-score="{{ "%.3f"|format(item.final_score if item.final_score is defined else 0) }}"
+            data-source="{{ item.source }}"
+            data-date="{{ item.published }}"
+            data-haystack="{{ (item.title ~ ' ' ~ item.source ~ ' ' ~ item.summary_p1 ~ ' ' ~ item.summary_p2 ~ ' ' ~ item.editor_reason|default(''))|lower|replace('"','')|replace("'",'') }}"
+          >
+            <div>
+              <div class="meta">
+                <span class="pill {% if is_original %}original{% endif %}">{{ "Original Essay" if is_original else "Curated Signal" }}</span>
+                <span>#{{ item.rank }}</span>
+                <span>{{ item.source }}</span>
+                <span>{{ item.published[:10] if item.published else "Undated" }}</span>
+              </div>
+              <h3 class="title">
+                {% if item.url %}
+                  <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">{{ item.title }}</a>
+                {% else %}
+                  {{ item.title }}
+                {% endif %}
+              </h3>
               <div class="sum">
                 <p>{{ item.summary_p1 }}</p>
-                <p>{{ item.summary_p2 }}</p>
+                {% if item.summary_p2 %}<p>{{ item.summary_p2 }}</p>{% endif %}
               </div>
-            </article>
-          {% endfor %}
-        </div>
+            </div>
+            <aside class="card-aside" aria-label="Article actions">
+              {% if item.final_score is defined %}
+                <span class="score">Score {{ "%.2f"|format(item.final_score) }}</span>
+              {% endif %}
+              {% if item.url %}
+                <a class="read-link" href="{{ item.url }}" target="_blank" rel="noopener noreferrer">{{ "Read Essay" if is_original else "Open Link" }}</a>
+              {% endif %}
+            </aside>
+          </article>
+        {% endfor %}
+      </div>
     </section>
   {% endfor %}
-
 {% endblock %}

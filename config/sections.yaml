@@ -1,66 +1,56 @@
 sections:
-  - id: exec       # A
+  - id: originals
     index: A
-    title: The AI/ML Brief
-    description: The 2–3 most consequential items this week.
+    title: Original Field Notes
+    description: Hand-written essays, implementation notes, and opinions from the publication team.
     match:
-      sources: ["MIT Technology Review (AI)","Harvard Business Review (AI)","McKinsey (All)","Gartner Blog (All)"]
+      sources: ["Original"]
       domains: []
-      keywords: ["policy","regulation","roadmap","strategy","leadership","CIO","CISO","budget","investment","risk"]
+      keywords: ["field note", "essay", "runbook", "postmortem", "architecture", "opinion"]
 
-  - id: strategy   # B
+  - id: pipelines
     index: B
-    title: Strategy & Market Analysis
-    description: Funding, competitive moves, adoption trends, business models.
+    title: Data Pipeline Architecture
+    description: Batch, streaming, orchestration, lineage, quality gates, contracts, and lakehouse operations.
     match:
-      sources: ["VentureBeat (AI)","TechCrunch (AI)","MIT Technology Review (AI)","Harvard Business Review (AI)","McKinsey (All)","Gartner Blog (All)"]
-      domains: ["technologyreview.com","hbr.org","venturebeat.com","techcrunch.com","mckinsey.com","gartner.com"]
-      keywords: ["market","funding","valuation","adoption","TCO","ROI","partnership","M&A","ecosystem"]
+      sources: ["AWS Big Data Blog", "Databricks Blog", "Confluent Blog", "Google Cloud Data Analytics Blog"]
+      domains: ["aws.amazon.com", "databricks.com", "confluent.io", "cloud.google.com"]
+      keywords: ["pipeline", "data pipeline", "streaming", "batch", "orchestration", "airflow", "dagster", "dbt", "spark", "flink", "kafka", "lakehouse", "lineage", "data contract", "data quality"]
 
-  - id: launches   # C
+  - id: aiops
     index: C
-    title: Launches & Product Updates
-    description: Vendor releases, pricing, GA announcements, integrations.
+    title: AIOps & Observability
+    description: Signals from logs, metrics, traces, incidents, SRE workflows, automated triage, and reliability tooling.
     match:
-      sources: ["OpenAI News","Google AI Blog","NVIDIA Blog","AWS Machine Learning Blog"]
-      domains: ["openai.com","blog.google","blogs.nvidia.com","aws.amazon.com"]
-      keywords: ["launch","shipping","GA","general availability","pricing","preview","integration","SDK","release"]
+      sources: ["AWS Machine Learning Blog", "Google Cloud Blog", "Datadog Blog", "Elastic Blog", "Netflix TechBlog"]
+      domains: ["aws.amazon.com", "cloud.google.com", "datadoghq.com", "elastic.co", "netflixtechblog.com"]
+      keywords: ["aiops", "observability", "incident", "sre", "root cause", "alert", "log", "metric", "trace", "monitoring", "operations", "remediation", "triage"]
 
-  - id: security   # D
+  - id: anomaly
     index: D
-    title: Security, Safety & Governance
-    description: Risks, mitigations, evals, incidents, compliance.
+    title: ML Anomaly Detection
+    description: Models, features, thresholds, drift, outliers, monitoring patterns, and detection evaluation.
     match:
-      sources: ["VentureBeat (AI)","TechCrunch (AI)","MIT Technology Review (AI)"]
-      domains: []
-      keywords: ["security","safety","governance","audit","prompt injection","exfiltration","jailbreak","abuse","PII","policy"]
+      sources: ["arXiv Machine Learning Papers", "arXiv AI Papers", "arXiv Statistics ML Papers", "AWS Machine Learning Blog", "Google AI Blog"]
+      domains: ["arxiv.org", "aws.amazon.com", "blog.google", "research.google"]
+      keywords: ["anomaly detection", "outlier", "novelty detection", "change point", "drift", "time series", "forecast", "threshold", "unsupervised", "autoencoder", "isolation forest", "monitoring"]
 
-  - id: applied    # E
+  - id: research
     index: E
-    title: Applied Engineering & Case Studies
-    description: Practical builds, RAG patterns, reference templates.
+    title: Research to Production
+    description: Research papers worth translating into production design decisions, with attention to constraints and failure modes.
     match:
-      sources: ["AWS Machine Learning Blog","Google AI Blog","VentureBeat (AI)","TechCrunch (AI)"]
-      domains: ["medium.com","dev.to","github.com","aws.amazon.com","blog.google"]
-      keywords: ["RAG","case study","playbook","reference","implementation","how we built","template","solution","architecture"]
+      sources: ["arXiv Machine Learning Papers", "arXiv AI Papers", "arXiv Systems Papers", "Google DeepMind", "Google AI Blog"]
+      domains: ["arxiv.org", "blog.google", "deepmind.google", "research.google"]
+      keywords: ["paper", "benchmark", "dataset", "evaluation", "scaling", "model monitoring", "data quality", "reliability", "production", "systems", "mlops", "llmops"]
 
-  - id: infra      # F
+  - id: tools
     index: F
-    title: Infrastructure & Performance
-    description: Serving, inference, KV, quantization, throughput/latency.
+    title: Tools & Release Watch
+    description: Notable open-source, cloud, and vendor updates that change how teams build or operate data and AI systems.
     match:
-      sources: ["NVIDIA Blog","AWS Machine Learning Blog","Google AI Blog"]
-      domains: ["blogs.nvidia.com","pytorch.org","tensorflow.org","developer.nvidia.com","aws.amazon.com","blog.google"]
-      keywords: ["throughput","latency","KV cache","Triton","CUDA","vLLM","quantization","LoRA","TensorRT","A100","H100","performance","scaling"]
+      sources: ["OpenAI News", "AWS Machine Learning Blog", "Databricks Blog", "Confluent Blog", "Google Cloud Blog"]
+      domains: ["github.com", "openai.com", "aws.amazon.com", "databricks.com", "confluent.io", "cloud.google.com"]
+      keywords: ["release", "launch", "general availability", "preview", "sdk", "connector", "integration", "open source", "agent", "workflow", "platform"]
 
-  - id: research   # G
-    index: G
-    title: Foundational Research & Emerging Trends
-    description: Research papers, breakthroughs, and emerging AI trends for business leaders.
-    match:
-      sources: ["Google AI Blog","Distill Research","Google DeepMind","NVIDIA AI Research","AWS Machine Learning Blog","arXiv AI Papers","arXiv Machine Learning Papers","arXiv NLP Papers","arXiv Computer Vision Papers","MIT Technology Review (AI)","VentureBeat (AI)"]
-      domains: ["blog.google","distill.pub","blogs.nvidia.com","aws.amazon.com","arxiv.org","technologyreview.com","venturebeat.com"]
-      keywords: ["research","paper","novel","breakthrough","sota","benchmark","dataset","theory","scaling law","transformer","federated","responsible AI","study","analysis","trends","machine learning","deep learning","large language model","llm","neural","reinforcement learning","natural language processing","nlp"]
-
-order: [exec, strategy, launches, security, applied, infra, research]
-
+order: [originals, pipelines, aiops, anomaly, research, tools]

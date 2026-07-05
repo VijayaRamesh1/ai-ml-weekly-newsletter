@@ -1,68 +1,88 @@
 sources:
-  # Research & Academic (working alternatives to broken arXiv feeds)
+  # Data pipeline architecture, orchestration, streaming, and lakehouse operations
+  - name: "AWS Big Data Blog"
+    type: rss
+    url: "https://aws.amazon.com/blogs/big-data/feed/"
+    include_keywords: ["data pipeline", "streaming", "batch", "orchestration", "data quality", "lakehouse", "spark", "flink", "kafka", "governance", "lineage"]
+    max_items: 25
+  - name: "Databricks Blog"
+    type: rss
+    url: "https://www.databricks.com/feed"
+    include_keywords: ["pipeline", "lakehouse", "delta", "spark", "data quality", "governance", "streaming", "mlops", "ai"]
+    max_items: 25
+  - name: "Confluent Blog"
+    type: rss
+    url: "https://www.confluent.io/blog/feed/"
+    include_keywords: ["streaming", "kafka", "flink", "pipeline", "real-time", "data quality", "event"]
+    max_items: 20
+  - name: "Google Cloud Data Analytics Blog"
+    type: rss
+    url: "https://cloud.google.com/blog/products/data-analytics/rss"
+    include_keywords: ["pipeline", "dataflow", "bigquery", "streaming", "data quality", "governance", "analytics", "ml"]
+    max_items: 25
+
+  # AIOps, observability, incidents, and production operations
+  - name: "AWS Machine Learning Blog"
+    type: rss
+    url: "https://aws.amazon.com/blogs/machine-learning/feed/"
+    include_keywords: ["aiops", "observability", "monitoring", "anomaly", "drift", "operations", "pipeline", "mlops", "agent", "automation"]
+    max_items: 25
+  - name: "Google Cloud Blog"
+    type: rss
+    url: "https://cloud.google.com/blog/rss"
+    include_keywords: ["aiops", "observability", "monitoring", "incident", "sre", "data pipeline", "anomaly", "operations", "mlops"]
+    max_items: 25
+  - name: "Datadog Blog"
+    type: rss
+    url: "https://www.datadoghq.com/blog/index.xml"
+    include_keywords: ["aiops", "observability", "monitoring", "incident", "anomaly", "logs", "metrics", "traces", "sre"]
+    max_items: 20
+  - name: "Elastic Blog"
+    type: rss
+    url: "https://www.elastic.co/blog/feed"
+    include_keywords: ["observability", "aiops", "anomaly", "logs", "metrics", "traces", "machine learning", "search"]
+    max_items: 20
+  - name: "Netflix TechBlog"
+    type: rss
+    url: "https://netflixtechblog.com/feed"
+    include_keywords: ["data", "pipeline", "observability", "incident", "reliability", "machine learning", "streaming"]
+    max_items: 15
+
+  # Product and platform updates relevant to AI/data operations
+  - name: "OpenAI News"
+    type: rss
+    url: "https://openai.com/news/rss.xml"
+    include_keywords: ["agents", "platform", "api", "eval", "monitoring", "safety", "data", "workflow"]
+    max_items: 15
   - name: "Google AI Blog"
     type: rss
     url: "https://blog.google/technology/ai/rss/"
-    include_keywords: ["research", "paper", "novel", "breakthrough", "sota", "machine learning", "deep learning"]
-    max_items: 15
-  - name: "Distill Research"
-    type: rss
-    url: "https://distill.pub/rss.xml"
-    include_keywords: ["research", "paper", "novel", "breakthrough", "sota", "machine learning", "deep learning"]
+    include_keywords: ["data", "monitoring", "anomaly", "operations", "research", "model", "agent", "ml"]
     max_items: 15
   - name: "Google DeepMind"
     type: rss
     url: "https://blog.google/technology/google-deepmind/rss/"
-    include_keywords: ["research", "paper", "novel", "breakthrough", "sota", "machine learning", "deep learning"]
+    include_keywords: ["research", "model", "evaluation", "data", "systems", "agent"]
     max_items: 15
-  - name: "NVIDIA AI Research"
-    type: rss
-    url: "https://blogs.nvidia.com/feed/"
-    include_keywords: ["research", "paper", "novel", "breakthrough", "sota", "machine learning", "deep learning", "ai"]
-    max_items: 15
-  - name: "AWS Machine Learning Blog"
-    type: rss
-    url: "https://aws.amazon.com/blogs/machine-learning/feed/"
-    include_keywords: ["research", "paper", "novel", "breakthrough", "sota", "machine learning", "deep learning", "ai"]
-    max_items: 15
-  # arXiv Research Papers (AI/ML/LLM focused)
-  - name: "arXiv AI Papers"
-    type: rss
-    url: "https://rss.arxiv.org/rss/cs.AI"
-    include_keywords: ["large language model", "llm", "transformer", "neural", "deep learning", "machine learning", "artificial intelligence", "reinforcement learning", "natural language processing", "nlp"]
-    max_items: 20
+
+  # arXiv feeds are supplemented by app/collector/arxiv_api_collect.py in CI.
   - name: "arXiv Machine Learning Papers"
     type: rss
     url: "https://rss.arxiv.org/rss/cs.LG"
-    include_keywords: ["large language model", "llm", "transformer", "neural", "deep learning", "machine learning", "artificial intelligence", "reinforcement learning", "natural language processing", "nlp"]
+    include_keywords: ["anomaly detection", "outlier", "drift", "time series", "monitoring", "mlops", "data quality", "pipeline"]
+    max_items: 25
+  - name: "arXiv AI Papers"
+    type: rss
+    url: "https://rss.arxiv.org/rss/cs.AI"
+    include_keywords: ["anomaly detection", "aiops", "monitoring", "agent", "operations", "data quality", "reasoning"]
+    max_items: 25
+  - name: "arXiv Systems Papers"
+    type: rss
+    url: "https://rss.arxiv.org/rss/cs.DC"
+    include_keywords: ["pipeline", "streaming", "distributed", "observability", "reliability", "performance", "data"]
     max_items: 20
-  - name: "arXiv NLP Papers"
+  - name: "arXiv Statistics ML Papers"
     type: rss
-    url: "https://rss.arxiv.org/rss/cs.CL"
-    include_keywords: ["large language model", "llm", "transformer", "neural", "deep learning", "machine learning", "artificial intelligence", "reinforcement learning", "natural language processing", "nlp"]
+    url: "https://rss.arxiv.org/rss/stat.ML"
+    include_keywords: ["anomaly detection", "outlier", "time series", "change point", "drift", "monitoring"]
     max_items: 20
-  - name: "arXiv Computer Vision Papers"
-    type: rss
-    url: "https://rss.arxiv.org/rss/cs.CV"
-    include_keywords: ["large language model", "llm", "transformer", "neural", "deep learning", "machine learning", "artificial intelligence", "computer vision", "image", "video"]
-    max_items: 15
-
-  # Strategic & Business Impact
-  - { name: "MIT Technology Review (AI)", type: rss, url: "https://www.technologyreview.com/topic/artificial-intelligence/feed/" }
-  - { name: "Harvard Business Review (AI)", type: rss, url: "https://hbr.org/rss/topic/artificial-intelligence" }
-  - { name: "VentureBeat (AI)", type: rss, url: "https://venturebeat.com/category/ai/feed/" }
-  - name: McKinsey (All)
-    type: rss
-    url: https://www.mckinsey.com/rss
-    include_keywords: ["ai","artificial intelligence","machine learning","ml","gen ai","generative ai"]
-  - { name: "TechCrunch (AI)", type: rss, url: "https://techcrunch.com/category/artificial-intelligence/feed/" }
-  - name: Gartner Blog (All)
-    type: rss
-    url: https://www.gartner.com/en/blog/feed
-    include_keywords: ["ai","artificial intelligence","machine learning","ml","gen ai","generative ai"]
-
-  # Platforms & Enterprise Ops
-  - { name: "AWS Machine Learning Blog", type: rss, url: "https://aws.amazon.com/blogs/machine-learning/feed/" }
-  - { name: "Google AI Blog",            type: rss, url: "https://ai.googleblog.com/feeds/posts/default" }
-  - { name: "NVIDIA Blog",               type: rss, url: "https://blogs.nvidia.com/feed/" }
-  - { name: "OpenAI News",               type: rss, url: "https://openai.com/news/rss.xml" }

@@ -1,0 +1,12 @@
+[
+  {
+    "title": "What Makes a Data Pipeline Worth Monitoring?",
+    "author": "PipelineOps Weekly",
+    "source": "Original",
+    "published": "2026-07-04",
+    "section_id": "originals",
+    "url": "",
+    "summary_p1": "Use this file for hand-written pieces from you and guest contributors. Each item can be a short essay, an implementation note, a design critique, or a field report from operating data and AI systems in production.",
+    "summary_p2": "Suggested angle for the first issue: define the newsletter's core thesis around data reliability, AI-assisted operations, and anomaly detection. Explain which pipeline failures deserve ML, which deserve deterministic checks, and where human review still belongs."
+  }
+]
