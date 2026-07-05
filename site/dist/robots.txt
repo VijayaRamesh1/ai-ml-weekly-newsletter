@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://vijayaramesh1.github.io/ai-ml-weekly-newsletter/sitemap.xml

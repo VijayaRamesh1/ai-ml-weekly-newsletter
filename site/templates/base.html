@@ -5,6 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{{ title }}</title>
   <meta name="description" content="{{ subheader }}" />
+  <meta name="keywords" content="{{ seo_keywords|join(', ') }}" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <link rel="canonical" href="{{ site_url }}" />
+  <link rel="sitemap" type="application/xml" href="{{ site_url.rstrip('/') }}/sitemap.xml" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="PipelineOps Weekly" />
+  <meta property="og:title" content="{{ title }}" />
+  <meta property="og:description" content="{{ subheader }}" />
+  <meta property="og:url" content="{{ site_url }}" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="{{ title }}" />
+  <meta name="twitter:description" content="{{ subheader }}" />
+
+  <script type="application/ld+json">{{ structured_data|tojson }}</script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -208,6 +223,42 @@
       color:var(--accent);
       font:700 12px/1 "IBM Plex Mono", monospace;
     }
+    .topic-strip{
+      padding:18px 0;
+      border-bottom:1px solid var(--line);
+      background:color-mix(in srgb, var(--panel) 46%, transparent);
+    }
+    .topic-strip .inner{
+      display:grid;
+      grid-template-columns:auto minmax(0,1fr);
+      gap:14px;
+      align-items:start;
+    }
+    .topic-label{
+      margin:0;
+      color:var(--muted);
+      font:700 12px/1.4 "IBM Plex Mono", monospace;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
+    .topics{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .topics span{
+      display:inline-flex;
+      align-items:center;
+      min-height:30px;
+      padding:0 10px;
+      border:1px solid var(--line);
+      border-radius:8px;
+      background:var(--panel);
+      color:var(--ink);
+      font-size:13px;
+      font-weight:700;
+    }
     .nav-shell{
       position:sticky;
       top:66px;
@@ -285,6 +336,7 @@
       .hero-grid{grid-template-columns:1fr}
       .controls{grid-template-columns:1fr 1fr}
       .controls input{grid-column:1 / -1}
+      .topic-strip .inner{grid-template-columns:1fr}
     }
     @media (max-width:620px){
       .wrap{padding:0 14px}
@@ -328,11 +380,22 @@
       <aside class="hero-panel" aria-label="Editorial focus">
         <h2>Editorial Promise</h2>
         <ul class="focus-list">
-          <li><span class="glyph">01</span><span><b>Original essays</b> on pipeline design, operational failure modes, and practical ML systems.</span></li>
-          <li><span class="glyph">02</span><span><b>Curated signals</b> from engineering blogs, vendor releases, incidents, and open-source projects.</span></li>
-          <li><span class="glyph">03</span><span><b>Research notes</b> translated into implementation tradeoffs for anomaly detection and AIOps.</span></li>
+          <li><span class="glyph">01</span><span><b>Original essays</b> on data pipeline reliability, operational failure modes, and practical ML systems.</span></li>
+          <li><span class="glyph">02</span><span><b>Curated signals</b> from engineering blogs, observability releases, incidents, and open-source data tools.</span></li>
+          <li><span class="glyph">03</span><span><b>Research notes</b> translated into implementation tradeoffs for ML anomaly detection and AIOps.</span></li>
         </ul>
       </aside>
+    </div>
+  </section>
+
+  <section class="topic-strip" aria-label="Coverage topics">
+    <div class="wrap inner">
+      <p class="topic-label">Coverage</p>
+      <div class="topics">
+        {% for keyword in seo_keywords[:8] %}
+          <span>{{ keyword }}</span>
+        {% endfor %}
+      </div>
     </div>
   </section>
 
